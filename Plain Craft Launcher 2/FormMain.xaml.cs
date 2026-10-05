@@ -195,7 +195,7 @@ public partial class FormMain
         // 更改窗口
         // Top = (GetWPFSize(My.Computer.Screen.WorkingArea.Height) - Height) / 2
 
-        // 梦之韵Pro：启动时自动检查更新
+        // 梦之韵Pro：启动时自动检查更新（OneDrive 国内源）
         _ = CheckUpdateAsync();
         // Left = (GetWPFSize(My.Computer.Screen.WorkingArea.Width) - Width) / 2
         isSizeSaveable = true;
@@ -1835,7 +1835,9 @@ public partial class FormMain
             var latest = (string)json["version"];
             var url = (string)json["url"];
             var cur = Basics.VersionName;
-            if (!cur.Contains(latest))
+            if (Version.TryParse(cur.Split('-')[0], out var curV) &&
+                Version.TryParse(latest, out var latestV) &&
+                latestV > curV)
             {
                 ModMain.MyMsgBox(
                     $"发现新版本 v{latest}，点击确定前往下载更新。",

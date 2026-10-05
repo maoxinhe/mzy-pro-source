@@ -325,10 +325,15 @@ namespace PCL
         private static void _OpenHelp(string arg, EventType type)
         {
             var args = SplitArgs(arg);
+            if (args.Length == 0 || string.IsNullOrWhiteSpace(args[0]))
+            {
+                ModBase.OpenWebsite("https://www.camzy.tech");
+                return;
+            }
             if (!Uri.TryCreate(args[0], UriKind.Absolute, out var uri) ||
                 (uri.Scheme != Uri.UriSchemeHttp && uri.Scheme != Uri.UriSchemeHttps))
             {
-                ModBase.OpenWebsite("https://docs.pclc.cc/ce");
+                ModBase.OpenWebsite("https://www.camzy.tech");
                 return;
             }
 
