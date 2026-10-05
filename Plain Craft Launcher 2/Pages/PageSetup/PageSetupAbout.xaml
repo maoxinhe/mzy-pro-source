@@ -104,6 +104,22 @@
                 </Grid>
             </local:MyCard>
 
+            <!-- 更新日志 -->
+            <local:MyCard Margin="0,15" Title="更新日志">
+                <StackPanel Margin="21,40,21,20">
+                    <TextBlock Margin="0,0,0,10" FontSize="14" FontWeight="SemiBold" Text="v2.15.31 (2026-10-05)" />
+                    <TextBlock Margin="0,0,0,5" Text="• 错误自动上报云端AI分析，邮件通知开发者" Foreground="Gray" />
+                    <TextBlock Margin="0,0,0,15" FontSize="14" FontWeight="SemiBold" Text="v2.15.30 (2026-10-05)" />
+                    <TextBlock Margin="0,0,0,5" Text="• 云端智谱AI判断更新，启动器上报版本自动检测" Foreground="Gray" />
+                    <TextBlock Margin="0,0,0,15" FontSize="14" FontWeight="SemiBold" Text="v2.15.29 (2026-10-05)" />
+                    <TextBlock Margin="0,0,0,5" Text="• 修复版本号检测bug，发行商改为苏州梦之韵科技" Foreground="Gray" />
+                    <TextBlock Margin="0,0,0,15" FontSize="14" FontWeight="SemiBold" Text="v2.15.28 (2026-10-05)" />
+                    <TextBlock Margin="0,0,0,5" Text="• 淡粉色主题，樱花山黄昏背景" Foreground="Gray" />
+                    <TextBlock Margin="0,0,0,15" FontSize="14" FontWeight="SemiBold" Text="v2.15.12 (2026-10-04)" />
+                    <TextBlock Margin="0,0,0,5" Text="• 集成Yggdrasil离线登录，AI助手，论坛入口" Foreground="Gray" />
+                </StackPanel>
+            </local:MyCard>
+
             <!-- 软件信息 -->
             <local:MyCard Margin="0,15" Title="软件信息">
                 <StackPanel Margin="21,40,21,20">
