@@ -28,8 +28,8 @@
         <Description>Minecraft 启动器 (梦之韵Pro，基于 Plain Craft Launcher 社区版二次开发)</Description>
         <Product>梦之韵Pro</Product>
         <Copyright>Copyright © 梦之韵团队. All Rights Reserved.</Copyright>
-        <AssemblyVersion>2.15.26.0</AssemblyVersion>
-        <FileVersion>2.15.26.0</FileVersion>
+        <AssemblyVersion>2.15.27.0</AssemblyVersion>
+        <FileVersion>2.15.27.0</FileVersion>
         <NoWarn>
             41999;42016;42017;42018;42019;42020;42021;42022;42032;42036;42314;
             VSTHRD002;VSTHRD003;VSTHRD110;VSTHRD200
