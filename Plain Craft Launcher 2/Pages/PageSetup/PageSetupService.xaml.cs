@@ -175,7 +175,7 @@ public partial class PageSetupService
         try
         {
             // 请求梦之韵官方整合包 API（地址随作者更新自动变化，每次现拉）
-            var data = await HttpRequest.GetJsonAsync<LiminalPackModel>("https://functions.liminalily.com/mc/mzy?download");
+            var data = await HttpRequest.GetJsonAsync<LiminalPackModel>("https://apc.camzy.uno/mc/mzy?download");
             var link = data?.Link ?? "";
             var size = data?.Size ?? 0L;
             var type = string.IsNullOrEmpty(data?.Type) ? "zip" : data.Type;
