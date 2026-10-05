@@ -1,4 +1,5 @@
 using System.IO;
+using System.Net.Http.Json;
 using System.Windows;
 using System.Windows.Documents;
 using System.Windows.Media;
@@ -151,6 +152,50 @@ public partial class PageLogRight
         File.WriteAllLines(savePath, ModMain.frmLogLeft.currentLog.fullLog);
         HintService.Hint(Lang.Text("LogPage.Export.Success"), HintType.Success);
         ModBase.OpenExplorer(savePath);
+    }
+
+    // 梦之韵Pro：崩溃日志一键上传，云端 AI 分析
+    private async void BtnOperationUploadLog_Click(object sender, ModBase.RouteEventArgs e)
+    {
+        try
+        {
+            var log = string.Join("\n", ModMain.frmLogLeft.currentLog.fullLog ?? []);
+            if (log.Length < 20)
+            {
+                HintService.Hint("日志内容过短，无法上传分析。", HintType.Warning);
+                return;
+            }
+            BtnOperationUploadLog.IsEnabled = false;
+            HintService.Hint("正在上传日志，AI 分析中…", HintType.Info);
+            var player = Core.Minecraft.Profile.ProfileService.Current?.UserName ?? "";
+            using var hc = new System.Net.Http.HttpClient { Timeout = TimeSpan.FromSeconds(90) };
+            var res = await hc.PostAsJsonAsync("https://apc.camzy.uno/api/log/upload",
+                new { log, player });
+            var obj = await res.Content.ReadFromJsonAsync<LogUploadResult>();
+            if (obj is not null && !string.IsNullOrWhiteSpace(obj.Analysis))
+            {
+                new LogResultWindow("崩溃日志 AI 分析", obj.Analysis).ShowDialog();
+            }
+            else
+            {
+                HintService.Hint("AI 暂时繁忙，请稍后再试。", HintType.Warning);
+            }
+        }
+        catch (Exception ex)
+        {
+            ModBase.Log(ex, "[梦之韵Pro] 日志上传失败");
+            HintService.Hint("网络异常，无法上传日志。", HintType.Error);
+        }
+        finally
+        {
+            BtnOperationUploadLog.IsEnabled = true;
+        }
+    }
+
+    private class LogUploadResult
+    {
+        [System.Text.Json.Serialization.JsonPropertyName("ok")] public bool Ok { get; set; }
+        [System.Text.Json.Serialization.JsonPropertyName("analysis")] public string? Analysis { get; set; }
     }
 
     private void BtnOperationKill_Click(object sender, ModBase.RouteEventArgs e)

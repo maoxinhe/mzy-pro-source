@@ -64,6 +64,11 @@
                                             Click="BtnOperationExportStackDump_Click"
                                             LogoScale="0.85"
                                             SvgIcon="lucide/package" />
+                    <local:MyIconTextButton x:Name="BtnOperationUploadLog" Margin="5,0,0,0"
+                                            Text="上传日志"
+                                            Click="BtnOperationUploadLog_Click"
+                                            LogoScale="0.9"
+                                            SvgIcon="lucide/cloud-upload" />
                 </StackPanel>
                 <Grid VerticalAlignment="Center" Margin="12,0,12,4">
                     <Grid.ColumnDefinitions>

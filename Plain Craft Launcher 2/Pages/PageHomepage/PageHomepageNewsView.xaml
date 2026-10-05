@@ -15,118 +15,288 @@
     </local:MyPageRight.DataContext>
 
     <Grid>
-        <ItemsControl ItemsSource="{Binding NewsItems}">
-            <ItemsControl.ItemsPanel>
-                <ItemsPanelTemplate>
-                    <core:WaterfallPanel
-                        Margin="0,0,0,10"
-                        ColumnSpacing="14"
-                        LayoutMode="AutoFit"
-                        MaxItemWidth="240"
-                        RowSpacing="14"
-                        VirtualizingPanel.CacheLengthUnit="Item"
-                        VirtualizingPanel.IsVirtualizing="True"
-                        VirtualizingPanel.VirtualizationMode="Recycling" />
-                </ItemsPanelTemplate>
-            </ItemsControl.ItemsPanel>
-            <ItemsControl.ItemTemplate>
-                <DataTemplate>
-                    <local:MyCard>
-                        <Grid Margin="12">
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="Auto" />
-                                <!-- 图片行 -->
-                                <RowDefinition Height="Auto" />
-                                <!-- 标题行 -->
-                                <RowDefinition Height="Auto" />
-                                <!-- 作者和时间行 -->
-                                <RowDefinition Height="Auto" />
-                                <!-- 简介行 -->
-                                <RowDefinition Height="Auto" />
-                            </Grid.RowDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
 
-                            <local:MyImage
-                                HorizontalAlignment="Stretch"
-                                CornerRadius="6"
-                                SnapsToDevicePixels="True"
-                                Source="{Binding Image}"
-                                Stretch="UniformToFill"
-                                ToolTip="{Binding ImageAltText}"
-                                UseLayoutRounding="True" />
-
-                            <!-- 标题 -->
-                            <Border
-                                Grid.Row="1"
-                                Margin="0,5,0,0"
-                                Background="{DynamicResource ColorBrushBackground}"
-                                ClipToBounds="True"
-                                CornerRadius="6"
-                                Padding="5,3">
-                                <TextBlock
-                                    FontSize="16"
-                                    FontWeight="Bold"
-                                    Foreground="{DynamicResource ColorBrush1}"
-                                    Text="{Binding Title}"
-                                    TextWrapping="Wrap" />
-                            </Border>
-
-                            <!-- 作者和时间 -->
-                            <Grid Grid.Row="2" Margin="0,5,0,0">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="*" />
-                                    <ColumnDefinition Width="Auto" />
-                                </Grid.ColumnDefinitions>
-                                <TextBlock
-                                    Grid.Column="0"
-                                    Foreground="{DynamicResource ColorBrushGray2}"
-                                    Text="{Binding Author}" />
-                                <TextBlock
-                                    Grid.Column="1"
-                                    Foreground="{DynamicResource ColorBrushGray2}"
-                                    Text="{Binding PublishDate, Converter={StaticResource LocalizationFormatConverter}, ConverterParameter=g}" />
-                            </Grid>
-
-                            <!-- 简介 -->
+        <!-- ===== 顶部：服务器状态 + 玩家数据 + 快捷工具 ===== -->
+        <StackPanel Grid.Row="0" Margin="16,16,16,0">
+            <!-- 服务器状态卡 -->
+            <local:MyCard>
+                <Grid Margin="14">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+                    <Grid Grid.Row="0">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        <TextBlock
+                            Grid.Column="0"
+                            FontSize="15"
+                            FontWeight="Bold"
+                            Foreground="{DynamicResource ColorBrush1}"
+                            Text="服务器状态" />
+                        <local:MyTextButton
+                            Grid.Column="1"
+                            x:Name="BtnRefreshStatus"
+                            Foreground="{DynamicResource ColorBrushGray2}"
+                            Text="刷新" />
+                    </Grid>
+                    <Grid Grid.Row="1" Margin="0,10,0,0">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+                        <!-- 在线人数 -->
+                        <StackPanel Grid.Column="0" Margin="0,0,22,0">
                             <TextBlock
-                                Grid.Row="3"
-                                Margin="0,5,0,0"
-                                Foreground="{DynamicResource ColorBrushGray4}"
-                                Text="{Binding Description}"
-                                TextWrapping="Wrap" />
-
-                            <!-- Read more -->
-                            <local:MyTextButton
-                                Grid.Row="4"
-                                Margin="0,5,5,0"
-                                HorizontalAlignment="Right"
+                                FontSize="12"
                                 Foreground="{DynamicResource ColorBrushGray2}"
-                                Text="{DynamicResource Launch.Homepage.News.ViewDetail}">
-                                <i:Interaction.Triggers>
-                                    <i:EventTrigger EventName="Click">
-                                        <i:InvokeCommandAction
-                                            Command="{Binding DataContext.OpenReadCommand, 
-                                                    RelativeSource={RelativeSource AncestorType=local:MyPageRight}}"
-                                            CommandParameter="{Binding Url}" />
-                                    </i:EventTrigger>
-                                </i:Interaction.Triggers>
-                            </local:MyTextButton>
+                                Text="在线人数" />
+                            <TextBlock
+                                x:Name="TxtOnlineCount"
+                                Margin="0,2,0,0"
+                                FontSize="24"
+                                FontWeight="Bold"
+                                Foreground="#B3665C"
+                                Text="--" />
+                        </StackPanel>
+                        <!-- 延迟 -->
+                        <StackPanel Grid.Column="1" Margin="0,0,22,0">
+                            <TextBlock
+                                FontSize="12"
+                                Foreground="{DynamicResource ColorBrushGray2}"
+                                Text="延迟" />
+                            <TextBlock
+                                x:Name="TxtPing"
+                                Margin="0,2,0,0"
+                                FontSize="20"
+                                FontWeight="Bold"
+                                Foreground="{DynamicResource ColorBrush1}"
+                                Text="--" />
+                        </StackPanel>
+                        <!-- 开服时长 -->
+                        <StackPanel Grid.Column="2" Margin="0,0,22,0">
+                            <TextBlock
+                                FontSize="12"
+                                Foreground="{DynamicResource ColorBrushGray2}"
+                                Text="开服时长" />
+                            <TextBlock
+                                x:Name="TxtUptime"
+                                Margin="0,2,0,0"
+                                FontSize="20"
+                                FontWeight="Bold"
+                                Foreground="{DynamicResource ColorBrush1}"
+                                Text="--" />
+                        </StackPanel>
+                        <!-- 在线玩家列表 -->
+                        <StackPanel Grid.Column="3" Margin="8,0,0,0">
+                            <TextBlock
+                                FontSize="12"
+                                Foreground="{DynamicResource ColorBrushGray2}"
+                                Text="在线玩家" />
+                            <WrapPanel x:Name="PanOnlinePlayers" Margin="0,4,0,0" />
+                            <TextBlock
+                                x:Name="TxtNoPlayers"
+                                FontSize="12"
+                                Foreground="{DynamicResource ColorBrushGray4}"
+                                Text="当前没有玩家在线" />
+                        </StackPanel>
+                    </Grid>
+                </Grid>
+            </local:MyCard>
+
+            <!-- 玩家数据 + 快捷工具 -->
+            <Grid Margin="0,12,0,0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+
+                <!-- 玩家数据面板 -->
+                <local:MyCard Grid.Column="0" Margin="0,0,6,0">
+                    <Grid Margin="14">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                        </Grid.RowDefinitions>
+                        <TextBlock
+                            Grid.Row="0"
+                            FontSize="15"
+                            FontWeight="Bold"
+                            Foreground="{DynamicResource ColorBrush1}"
+                            Text="我的数据" />
+                        <Grid Grid.Row="1" Margin="0,10,0,0">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <StackPanel Grid.Column="0" Margin="0,0,18,0">
+                                <TextBlock FontSize="12" Foreground="{DynamicResource ColorBrushGray2}" Text="玩家" />
+                                <TextBlock x:Name="TxtPlayerName" Margin="0,2,0,0" FontSize="16" FontWeight="Bold" Foreground="{DynamicResource ColorBrush1}" Text="未登录" />
+                            </StackPanel>
+                            <StackPanel Grid.Column="1" Margin="0,0,18,0">
+                                <TextBlock FontSize="12" Foreground="{DynamicResource ColorBrushGray2}" Text="游戏时长" />
+                                <TextBlock x:Name="TxtPlayTime" Margin="0,2,0,0" FontSize="16" FontWeight="Bold" Foreground="{DynamicResource ColorBrush1}" Text="--" />
+                            </StackPanel>
+                            <StackPanel Grid.Column="2" Margin="0,0,18,0">
+                                <TextBlock FontSize="12" Foreground="{DynamicResource ColorBrushGray2}" Text="白名单" />
+                                <TextBlock x:Name="TxtWhitelist" Margin="0,2,0,0" FontSize="16" FontWeight="Bold" Foreground="#B3665C" Text="--" />
+                            </StackPanel>
+                            <StackPanel Grid.Column="3">
+                                <TextBlock FontSize="12" Foreground="{DynamicResource ColorBrushGray2}" Text="当前在线" />
+                                <TextBlock x:Name="TxtOnlineState" Margin="0,2,0,0" FontSize="16" FontWeight="Bold" Foreground="{DynamicResource ColorBrush1}" Text="--" />
+                            </StackPanel>
                         </Grid>
-                    </local:MyCard>
-                </DataTemplate>
-            </ItemsControl.ItemTemplate>
-        </ItemsControl>
+                    </Grid>
+                </local:MyCard>
 
-        <TextBlock
-            Foreground="{DynamicResource ColorBrushRedLight}"
-            Text="{Binding ErrorMessage}"
-            Visibility="{Binding ErrorMessage, Converter={StaticResource NullToVisibilityConverter}}" />
+                <!-- 快捷工具 -->
+                <local:MyCard Grid.Column="1" Margin="6,0,0,0">
+                    <Grid Margin="14">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                        </Grid.RowDefinitions>
+                        <TextBlock
+                            Grid.Row="0"
+                            FontSize="15"
+                            FontWeight="Bold"
+                            Foreground="{DynamicResource ColorBrush1}"
+                            Text="快捷工具" />
+                        <WrapPanel Grid.Row="1" Margin="0,10,0,0">
+                            <local:MyTextButton x:Name="BtnOpenAi" Margin="0,0,14,8" Text="AI 助手" />
+                            <local:MyTextButton x:Name="BtnOpenModCheck" Margin="0,0,14,8" Text="模组冲突检测" />
+                            <local:MyTextButton x:Name="BtnOpenMemAdvice" Margin="0,0,14,8" Text="内存优化建议" />
+                        </WrapPanel>
+                    </Grid>
+                </local:MyCard>
+            </Grid>
+        </StackPanel>
 
-        <local:MyCard
-            Margin="32"
-            HorizontalAlignment="Center"
-            VerticalAlignment="Center"
-            Visibility="{Binding IsLoading, Converter={StaticResource BooleanToVisibilityConverter}}">
-            <local:MyLoading Text="{DynamicResource Launch.Homepage.News.Loading}" x:Name="Load" Margin="20,20,20,17" />
-        </local:MyCard>
+        <!-- ===== 新闻流 ===== -->
+        <Grid Grid.Row="1" Margin="0,10,0,0">
+            <ItemsControl ItemsSource="{Binding NewsItems}">
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <core:WaterfallPanel
+                            Margin="0,0,0,10"
+                            ColumnSpacing="14"
+                            LayoutMode="AutoFit"
+                            MaxItemWidth="240"
+                            RowSpacing="14"
+                            VirtualizingPanel.CacheLengthUnit="Item"
+                            VirtualizingPanel.IsVirtualizing="True"
+                            VirtualizingPanel.VirtualizationMode="Recycling" />
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <local:MyCard>
+                            <Grid Margin="12">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto" />
+                                    <!-- 图片行 -->
+                                    <RowDefinition Height="Auto" />
+                                    <!-- 标题行 -->
+                                    <RowDefinition Height="Auto" />
+                                    <!-- 作者和时间行 -->
+                                    <RowDefinition Height="Auto" />
+                                    <!-- 简介行 -->
+                                    <RowDefinition Height="Auto" />
+                                </Grid.RowDefinitions>
+
+                                <local:MyImage
+                                    HorizontalAlignment="Stretch"
+                                    CornerRadius="6"
+                                    SnapsToDevicePixels="True"
+                                    Source="{Binding Image}"
+                                    Stretch="UniformToFill"
+                                    ToolTip="{Binding ImageAltText}"
+                                    UseLayoutRounding="True" />
+
+                                <!-- 标题 -->
+                                <Border
+                                    Grid.Row="1"
+                                    Margin="0,5,0,0"
+                                    Background="{DynamicResource ColorBrushBackground}"
+                                    ClipToBounds="True"
+                                    CornerRadius="6"
+                                    Padding="5,3">
+                                    <TextBlock
+                                        FontSize="16"
+                                        FontWeight="Bold"
+                                        Foreground="{DynamicResource ColorBrush1}"
+                                        Text="{Binding Title}"
+                                        TextWrapping="Wrap" />
+                                </Border>
+
+                                <!-- 作者和时间 -->
+                                <Grid Grid.Row="2" Margin="0,5,0,0">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="Auto" />
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock
+                                        Grid.Column="0"
+                                        Foreground="{DynamicResource ColorBrushGray2}"
+                                        Text="{Binding Author}" />
+                                    <TextBlock
+                                        Grid.Column="1"
+                                        Foreground="{DynamicResource ColorBrushGray2}"
+                                        Text="{Binding PublishDate, Converter={StaticResource LocalizationFormatConverter}, ConverterParameter=g}" />
+                                </Grid>
+
+                                <!-- 简介 -->
+                                <TextBlock
+                                    Grid.Row="3"
+                                    Margin="0,5,0,0"
+                                    Foreground="{DynamicResource ColorBrushGray4}"
+                                    Text="{Binding Description}"
+                                    TextWrapping="Wrap" />
+
+                                <!-- Read more -->
+                                <local:MyTextButton
+                                    Grid.Row="4"
+                                    Margin="0,5,5,0"
+                                    HorizontalAlignment="Right"
+                                    Foreground="{DynamicResource ColorBrushGray2}"
+                                    Text="{DynamicResource Launch.Homepage.News.ViewDetail}">
+                                    <i:Interaction.Triggers>
+                                        <i:EventTrigger EventName="Click">
+                                            <i:InvokeCommandAction
+                                                Command="{Binding DataContext.OpenReadCommand, 
+                                                        RelativeSource={RelativeSource AncestorType=local:MyPageRight}}"
+                                                CommandParameter="{Binding Url}" />
+                                        </i:EventTrigger>
+                                    </i:Interaction.Triggers>
+                                </local:MyTextButton>
+                            </Grid>
+                        </local:MyCard>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+
+            <TextBlock
+                Foreground="{DynamicResource ColorBrushRedLight}"
+                Text="{Binding ErrorMessage}"
+                Visibility="{Binding ErrorMessage, Converter={StaticResource NullToVisibilityConverter}}" />
+
+            <local:MyCard
+                Margin="32"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Center"
+                Visibility="{Binding IsLoading, Converter={StaticResource BooleanToVisibilityConverter}}">
+                <local:MyLoading Text="{DynamicResource Launch.Homepage.News.Loading}" x:Name="Load" Margin="20,20,20,17" />
+            </local:MyCard>
+        </Grid>
     </Grid>
 </local:MyPageRight>
