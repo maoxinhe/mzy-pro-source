@@ -161,6 +161,18 @@ public partial class Application
 
             var detail = e.Exception.ToString();
 
+            // 梦之韵Pro：错误自动上报云端AI分析
+            _ = Task.Run(async () =>
+            {
+                try
+                {
+                    using var hc = new HttpClient();
+                    await hc.PostAsJsonAsync("https://apc.camzy.uno/error/report",
+                        new { error = detail, version = Basics.VersionName });
+                }
+                catch { }
+            });
+
             // Automatic error analysis for environment issues
             if (detail.Contains("System.Windows.Threading.Dispatcher.Invoke") ||
                 detail.Contains("MS.Internal.AppModel.ITaskbarList.HrInit") ||
