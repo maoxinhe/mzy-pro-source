@@ -281,7 +281,7 @@ public partial class FormMain
                 {
                     ModDownload.dlClientListMojangLoader.Start(1); // PCL 会同时根据这里的加载结果决定是否使用官方源进行下载
                     RunCountSub();
-                    UpdateManager.serverLoader.Start(1);
+                    // UpdateManager.serverLoader.Start(1); // 梦之韵Pro：禁用 PCL 自带更新，用 OneDrive 源
                     ModBase.RunInNewThread(ModMain.TryClearTaskTemp, "TryClearTaskTemp", ThreadPriority.BelowNormal);
                 }
                 catch (Exception ex)
@@ -340,8 +340,8 @@ public partial class FormMain
         if ((int)Config.Launch.GameWindowMode == 5)
             Config.Launch.GameWindowMode = GameWindowSizeMode.Default;
 
-        // 更新后展示社区版提示
-        UpdateManager.ShowCEAnnounce();
+        // 梦之韵Pro：禁用 PCL 社区版提示
+        // UpdateManager.ShowCEAnnounce();
         // 输出更新日志
         if (lastVersionCode <= 0)
             return;
