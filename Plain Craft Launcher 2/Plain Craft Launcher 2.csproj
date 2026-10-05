@@ -27,7 +27,8 @@
         <AssemblyTitle>梦之韵Pro</AssemblyTitle>
         <Description>Minecraft 启动器 (梦之韵Pro，基于 Plain Craft Launcher 社区版二次开发)</Description>
         <Product>梦之韵Pro</Product>
-        <Copyright>Copyright © 梦之韵团队. All Rights Reserved.</Copyright>
+        <Company>苏州梦之韵科技</Company>
+        <Copyright>Copyright © 苏州梦之韵科技. All Rights Reserved.</Copyright>
         <AssemblyVersion>2.15.27.0</AssemblyVersion>
         <FileVersion>2.15.27.0</FileVersion>
         <NoWarn>
