@@ -1825,29 +1825,29 @@ public partial class FormMain
         }
         }
 
-    // 梦之韵Pro：启动时检查更新
+    // 梦之韵Pro：启动时上报版本，云端判断是否更新
     private async Task CheckUpdateAsync()
     {
         try
         {
             await Task.Delay(2000);
-            var json = Requester.FetchJson("https://apc.camzy.uno/update/latest").AsObject();
-            var latest = (string)json["version"];
-            var url = (string)json["url"];
-            var cur = Basics.VersionName;
-            if (Version.TryParse(cur.Split('-')[0], out var curV) &&
-                Version.TryParse(latest, out var latestV) &&
-                latestV > curV)
+            var cur = Basics.VersionName.Split('-')[0];
+            var json = Requester.FetchJson($"https://apc.camzy.uno/update/check?v={cur}").AsObject();
+            if (json["needUpdate"]?.ToString() == "true")
             {
+                var latest = json["latest"]?.AsObject();
+                var ver = latest?["version"]?.ToString() ?? "";
+                var url = latest?["url"]?.ToString() ?? "";
+                var log = latest?["changelog"]?.ToString() ?? "";
                 ModMain.MyMsgBox(
-                    $"发现新版本 v{latest}，点击确定前往下载更新。",
+                    $"发现新版本 v{ver}\n{log}\n\n点击确定前往下载。",
                     "梦之韵Pro 更新",
                     "去更新");
                 ModBase.OpenWebsite(url);
             }
         }
         catch { }
-        }
+    }
 
     private void BtnTitleInner_Click(object sender, EventArgs e)
     {
