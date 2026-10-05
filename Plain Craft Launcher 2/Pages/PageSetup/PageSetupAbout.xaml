@@ -166,7 +166,7 @@
                             Text="更新日志" />
                     </Grid>
                     <TextBlock Margin="0,12,0,0" TextWrapping="Wrap" LineHeight="18"
-                               Text="梦之韵Pro 是专为梦之韵服务器打造的 PCL2 增强启动器。遇到问题请在玩家门户「工单」中反馈。" />
+                               Text="梦之韵Pro 是专为梦之韵服务器打造的一体化增强启动器。遇到问题请在玩家门户「工单」中反馈。" />
                 </StackPanel>
             </local:MyCard>
         </StackPanel>
