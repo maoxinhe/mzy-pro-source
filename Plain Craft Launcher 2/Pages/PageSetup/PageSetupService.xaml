@@ -1,0 +1,118 @@
+<local:MyPageRight
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="clr-namespace:PCL"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d" x:Class="PCL.PageSetupService"
+    PanScroll="{Binding ElementName=PanBack}">
+    <local:MyScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled" x:Name="PanBack">
+        <StackPanel x:Name="PanMain" Margin="25,25,25,10">
+            <!-- 服务器状态卡（在线 / 延迟 / 开服时长 / 排行） -->
+            <local:MyCard Title="服务器状态" Margin="0,0,0,15">
+                <StackPanel Margin="20,45,20,20">
+                    <WrapPanel>
+                        <TextBlock Text="状态：" VerticalAlignment="Center"/>
+                        <TextBlock x:Name="TxtSrvOnline" Text="检测中" Margin="6,0,18,0" FontWeight="SemiBold"/>
+                        <TextBlock Text="延迟：" VerticalAlignment="Center"/>
+                        <TextBlock x:Name="TxtSrvPing" Text="-" Margin="6,0,18,0"/>
+                        <TextBlock Text="开服时长：" VerticalAlignment="Center"/>
+                        <TextBlock x:Name="TxtSrvUptime" Text="-" Margin="6,0,18,0"/>
+                        <TextBlock Text="在线人数：" VerticalAlignment="Center"/>
+                        <TextBlock x:Name="TxtSrvPlayers" Text="-" Margin="6,0,18,0"/>
+                        <Button x:Name="BtnSrvRefresh" Content="刷新" Padding="12,3" Click="BtnSrvRefresh_Click"/>
+                    </WrapPanel>
+                    <TextBlock x:Name="TxtSrvRank" Text="" Margin="0,10,0,0" TextWrapping="Wrap" LineHeight="20" Foreground="{DynamicResource Extension.SecondaryTextBrush}"/>
+                </StackPanel>
+            </local:MyCard>
+            <!-- 服务器信息卡片 -->
+            <local:MyCard Title="{DynamicResource Setup.Service.Info.Title}">
+                <StackPanel Margin="20,40,20,20">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" SharedSizeGroup="Name" />
+                            <ColumnDefinition />
+                            <ColumnDefinition Width="8" />
+                            <ColumnDefinition Width="150" />
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="28" />
+                            <RowDefinition Height="7" />
+                            <RowDefinition Height="28" />
+                            <RowDefinition Height="7" />
+                            <RowDefinition Height="28" />
+                            <RowDefinition Height="7" />
+                            <RowDefinition Height="28" />
+                        </Grid.RowDefinitions>
+                        <TextBlock Text="{DynamicResource Setup.Service.Info.McServer}" Grid.Row="0" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="0,0,25,0" />
+                        <TextBlock x:Name="TextMcServer" Grid.Column="1" Grid.Row="0" VerticalAlignment="Center" HorizontalAlignment="Left" Text="remv.top:11111" />
+                        <local:MyButton x:Name="BtnCopyServer" Grid.Column="3" Grid.Row="0" Text="{DynamicResource Setup.Service.Info.Copy}" ColorType="Normal" Click="BtnCopyServer_Click" />
+                        <TextBlock Text="{DynamicResource Setup.Service.Info.Website}" Grid.Row="2" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="0,0,25,0" />
+                        <local:MyTextButton x:Name="BtnWebsite" Grid.Column="1" Grid.Row="2" HorizontalAlignment="Left" VerticalAlignment="Center"
+                                            Text="www.camzy.tech" Click="BtnWebsite_Click" />
+                        <TextBlock Text="{DynamicResource Setup.Service.Info.Api}" Grid.Row="4" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="0,0,25,0" />
+                        <TextBlock x:Name="TextApi" Grid.Column="1" Grid.Row="4" VerticalAlignment="Center" HorizontalAlignment="Left" Text="apc.camzy.uno" />
+                        <TextBlock Text="{DynamicResource Setup.Service.Info.Contact}" Grid.Row="6" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="0,0,25,0" />
+                        <TextBlock x:Name="TextContact" Grid.Column="1" Grid.Row="6" VerticalAlignment="Center" HorizontalAlignment="Left" Text="QQ 1096550598 / TG @maoxinhe" />
+                    </Grid>
+                </StackPanel>
+            </local:MyCard>
+
+            <!-- 更新日志卡片 -->
+            <local:MyCard x:Name="CardChangelog" Margin="0,15" Title="{DynamicResource Setup.Service.Changelog.Title}">
+                <StackPanel Margin="20,40,20,20">
+                    <TextBlock x:Name="TextChangelogVersion" FontWeight="Bold" FontSize="16" Text="{DynamicResource Setup.Service.Changelog.Loading}" />
+                    <TextBlock x:Name="TextChangelogContent" Margin="0,12,0,0" TextWrapping="Wrap" LineHeight="20" />
+                </StackPanel>
+            </local:MyCard>
+
+            <!-- 服务功能卡片 -->
+            <local:MyCard Title="{DynamicResource Setup.Service.Features.Title}" Margin="0,0,0,15">
+                <StackPanel Margin="20,40,20,20">
+                    <TextBlock Text="{DynamicResource Setup.Service.Features.Desc}" TextWrapping="Wrap" />
+                    <WrapPanel Margin="0,15,0,0" Orientation="Horizontal">
+                        <local:MyButton x:Name="BtnMods" Text="{DynamicResource Setup.Service.Features.Mods}" ColorType="Highlight"
+                                        Margin="0,0,12,12" Padding="15,0" Click="BtnMods_Click" />
+                        <local:MyButton x:Name="BtnPack" Text="{DynamicResource Setup.Service.Features.Pack}" ColorType="Highlight"
+                                        Margin="0,0,12,12" Padding="15,0" Click="BtnPack_Click" />
+                        <local:MyButton x:Name="BtnTutorial" Text="{DynamicResource Setup.Service.Features.Tutorial}" ColorType="Normal"
+                                        Margin="0,0,12,12" Padding="15,0" Click="BtnTutorial_Click" />
+                    </WrapPanel>
+                    <StackPanel x:Name="PanModUpdate" Margin="0,18,0,0" Visibility="Collapsed">
+                        <TextBlock x:Name="TextModUpdateStatus" TextWrapping="Wrap" FontSize="14" />
+                        <ProgressBar x:Name="ProgressModUpdate" Margin="0,10,0,0" Height="8" Minimum="0" Maximum="100" />
+                    </StackPanel>
+                </StackPanel>
+            </local:MyCard>
+
+            <!-- 第三方登录（Yggdrasil）卡片 -->
+            <local:MyCard Title="第三方登录（离线玩家）" Margin="0,0,0,15">
+                <StackPanel Margin="20,40,20,20">
+                    <TextBlock Text="离线玩家登录方式：① 打开玩家门户，用 SSO 账号登录并绑定游戏名；② 在「我的账号」生成 Yggdrasil 登录码；③ 启动器「版本设置 → 服务器 → 第三方登录」添加认证服务器 https://ygg.camzy.uno，用户名填绑定游戏名，密码填登录码（10 分钟有效）；④ 启动游戏即可进服。" TextWrapping="Wrap" LineHeight="22" />
+                    <WrapPanel Margin="0,15,0,0" Orientation="Horizontal">
+                        <local:MyButton x:Name="BtnYggPortal" Text="打开玩家门户" ColorType="Highlight"
+                                        Margin="0,0,12,12" Padding="15,0" Click="BtnYggPortal_Click" />
+                        <local:MyButton x:Name="BtnYggCopy" Text="复制认证服务器地址" ColorType="Normal"
+                                        Margin="0,0,12,12" Padding="15,0" Click="BtnYggCopy_Click" />
+                    </WrapPanel>
+                </StackPanel>
+            </local:MyCard>
+
+            <!-- AI 助手卡片 -->
+            <local:MyCard Title="AI 助手" Margin="0,0,0,15">
+                <StackPanel Margin="20,40,20,20">
+                    <TextBlock Text="问我游戏、启动器、模组问题，或粘贴错误日志自动分析。由云端 AI 提供解答。" TextWrapping="Wrap" />
+                    <StackPanel Orientation="Horizontal" Margin="0,15,0,0">
+                        <local:MyTextBox x:Name="InAiQuestion" Width="320" HintText="问 AI：如 进服报错怎么办 / 怎么装光影" />
+                        <local:MyButton x:Name="BtnAiAsk" Text="问 AI" ColorType="Highlight" Margin="12,0,0,0" Click="BtnAiAsk_Click" />
+                    </StackPanel>
+                    <TextBox x:Name="InAiLog" Margin="0,12,0,0" Height="80" AcceptsReturn="True" TextWrapping="Wrap"
+                             VerticalScrollBarVisibility="Auto" FontSize="12" ToolTip="可选：粘贴错误日志让 AI 分析" />
+                    <local:MyButton x:Name="BtnAiAnalyzeLog" Text="分析错误日志" ColorType="Normal" Margin="0,10,0,0"
+                                    HorizontalAlignment="Left" Click="BtnAiAnalyzeLog_Click" />
+                    <TextBlock x:Name="TextAiResult" Margin="0,12,0,0" TextWrapping="Wrap" FontSize="13" LineHeight="20" />
+                </StackPanel>
+            </local:MyCard>
+        </StackPanel>
+    </local:MyScrollViewer>
+</local:MyPageRight>

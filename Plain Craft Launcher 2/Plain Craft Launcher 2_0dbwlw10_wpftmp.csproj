@@ -1,0 +1,522 @@
+<Project>
+  <PropertyGroup>
+    <AssemblyName>Plain Craft Launcher 2</AssemblyName>
+    <IntermediateOutputPath>obj/Release/net10.0-windows/win-x64/</IntermediateOutputPath>
+    <BaseIntermediateOutputPath>obj/</BaseIntermediateOutputPath>
+    <MSBuildProjectExtensionsPath>/home/user/Doubao/chats/38445348869032450/pclce_work/PCL2-CE/Plain Craft Launcher 2/obj/</MSBuildProjectExtensionsPath>
+    <_TargetAssemblyProjectName>Plain Craft Launcher 2</_TargetAssemblyProjectName>
+    <RootNamespace>PCL</RootNamespace>
+  </PropertyGroup>
+  <Import Project="Sdk.props" Sdk="Microsoft.NET.Sdk" />
+  <PropertyGroup>
+    <Nullable>enable</Nullable>
+    <TargetFramework>net10.0-windows</TargetFramework>
+    <OutputType>WinExe</OutputType>
+    <RootNamespace>PCL</RootNamespace>
+    <MyType>Custom</MyType>
+    <IsWebBootstrapper>false</IsWebBootstrapper>
+    <StartupObject>PCL.Program</StartupObject>
+    <PublishUrl>publish\</PublishUrl>
+    <PublishSingleFile>true</PublishSingleFile>
+    <IncludeNativeLibrariesForSelfExtract>true</IncludeNativeLibrariesForSelfExtract>
+    <RuntimeIdentifier Condition="'$(Platform)' == 'x64'">win-x64</RuntimeIdentifier>
+    <RuntimeIdentifier Condition="'$(Platform)' == 'ARM64'">win-arm64</RuntimeIdentifier>
+    <EnableWindowsTargeting>true</EnableWindowsTargeting>
+    <MapFileExtensions>true</MapFileExtensions>
+    <TargetCulture>zh-CN</TargetCulture>
+    <UseApplicationTrust>false</UseApplicationTrust>
+    <BootstrapperEnabled>true</BootstrapperEnabled>
+    <LangVersion>14</LangVersion>
+    <UseWPF>true</UseWPF>
+    <Configurations>Beta;Debug;Release;CI</Configurations>
+    <Platforms>AnyCPU;x64;ARM64</Platforms>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <ApplicationManifest>app.manifest</ApplicationManifest>
+    <ApplicationIcon>Images\icon.ico</ApplicationIcon>
+    <AssemblyTitle>梦之韵Pro</AssemblyTitle>
+    <Description>Minecraft 启动器 (梦之韵Pro，基于 Plain Craft Launcher 社区版二次开发)</Description>
+    <Product>梦之韵Pro</Product>
+    <Copyright>Copyright © 梦之韵团队. All Rights Reserved.</Copyright>
+    <AssemblyVersion>2.15.13.0</AssemblyVersion>
+    <FileVersion>2.15.13.0</FileVersion>
+    <NoWarn>
+            41999;42016;42017;42018;42019;42020;42021;42022;42032;42036;42314;
+            VSTHRD002;VSTHRD003;VSTHRD110;VSTHRD200
+        </NoWarn>
+    <DefaultItemExcludes>$(DefaultItemExcludes);$(ProjectDir)**\*.vb</DefaultItemExcludes>
+    <CETCompat>false</CETCompat>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)' == 'Debug'">
+    <OutputPath>bin\Debug\</OutputPath>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <DefineConstants>TRACE;DEBUG</DefineConstants>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)' == 'CI' Or '$(Configuration)' == 'DebugCI'">
+    <OutputPath>bin\CI\</OutputPath>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <DefineConstants>TRACE;DEBUGCI</DefineConstants>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)' == 'Release'">
+    <OutputPath>bin\Release\</OutputPath>
+    <DebugSymbols>false</DebugSymbols>
+    <DebugType>none</DebugType>
+    <Optimize>true</Optimize>
+    <DefineConstants>RELEASE</DefineConstants>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)' == 'Beta'">
+    <OutputPath>bin\Beta\</OutputPath>
+    <DebugSymbols>false</DebugSymbols>
+    <DebugType>none</DebugType>
+    <Optimize>true</Optimize>
+    <DefineConstants>BETA</DefineConstants>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Dapper" Version="2.1.79" />
+    <PackageReference Include="DotNet.Glob" Version="3.1.3" />
+    <PackageReference Include="Downloader" Version="5.9.4" />
+    <PackageReference Include="Markdig.Wpf" Version="0.5.0.1" />
+    <PackageReference Include="Microsoft.Data.Sqlite" Version="10.0.9" />
+    <PackageReference Include="NAudio" Version="2.3.0" />
+    <PackageReference Include="protobuf-net" Version="3.2.56" />
+    <PackageReference Include="SQLitePCLRaw.bundle_e_sqlite3" Version="3.0.3" />
+    <PackageReference Include="System.Net.Http" Version="4.3.4" />
+    <PackageReference Include="System.Text.RegularExpressions" Version="4.3.1" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\PCL.Core\PCL.Core.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <Using Include="System.Text.Json" />
+    <Using Include="System.Text.Json.Nodes" />
+  </ItemGroup>
+  <ItemGroup>
+    <Import Include="System.IO" />
+    <Import Include="System.Net" />
+    <Import Include="System.Text" />
+    <Import Include="System.Threading" />
+    <Import Include="System.Windows" />
+    <Import Include="System.Windows.Controls" />
+    <Import Include="System.Windows.Data" />
+    <Import Include="System.Windows.Documents" />
+    <Import Include="System.Windows.Input" />
+    <Import Include="System.Windows.Shapes" />
+    <Import Include="System.Windows.Media" />
+    <Import Include="System.Windows.Media.Imaging" />
+  </ItemGroup>
+  <!-- 信不过巨硬的智障代码，手动包含需要的文件 -->
+  <PropertyGroup>
+    <EnableDefaultItems>false</EnableDefaultItems>
+    <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
+    <EnableDefaultEmbeddedResourceItems>false</EnableDefaultEmbeddedResourceItems>
+    <EnableDefaultNoneItems>false</EnableDefaultNoneItems>
+    <EnableDefaultApplicationDefinition>false</EnableDefaultApplicationDefinition>
+    <EnableDefaultPageItems>false</EnableDefaultPageItems>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="**\*.cs" Exclude="bin\**;obj\**;publish\**" />
+    <EmbeddedResource Include="metadata.json" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="LICENCE" />
+  </ItemGroup>
+  <ItemGroup>
+    <ReferencePath Include="/home/user/.nuget/packages/microsoft.windowsdesktop.app.ref/10.0.12/ref/net10.0/Accessibility.dll" />
+    <ReferencePath Include="/home/user/.nuget/packages/ae.dns.client/3.1.0/lib/net6.0/Ae.Dns.Client.dll" />
+    <ReferencePath Include="/home/user/.nuget/packages/ae.dns.protocol/3.1.0/lib/net6.0/Ae.Dns.Protocol.dll" />
+    <ReferencePath Include="/home/user/.nuget/packages/communitytoolkit.mvvm/8.4.2/lib/net8.0/CommunityToolkit.Mvvm.dll" />
+    <ReferencePath Include="/home/user/.nuget/packages/dapper/2.1.79/lib/net10.0/Dapper.dll" />
+    <ReferencePath Include="/home/user/.nuget/packages/dotnet.glob/3.1.3/lib/netcoreapp2.1/DotNet.Glob.dll" />
+    <ReferencePath Include="/home/user/.nuget/packages/downloader/5.9.4/lib/net10.0/Downloader.dll" />
+    <ReferencePath Include="/home/user/.nuget/packages/dtls/0.3.4/lib/net10.0/DTLS.dll" />
+    <ReferencePath Include="/home/user/.nuget/packages/fluentvalidation/12.1.1/lib/net8.0/FluentValidation.dll" />
+    <ReferencePath Include="/home/user/.nuget/packages/fnbt/1.0.0/lib/netstandard2.0/fNbt.dll" />
+    <ReferencePath Include="/home/user/.nuget/packages/humanizer.core/3.0.10/lib/net10.0/Humanizer.dll" />
+    <ReferencePath Include="/home/user/.nuget/packages/sharpziplib/1.4.2/lib/net6.0/ICSharpCode.SharpZipLib.dll" />
+    <ReferencePath Include="/home/user/.nuget/packages/litedb/5.0.21/lib/netstandard2.0/LiteDB.dll" />
+    <ReferencePath Include="/home/user/.nuget/packages/markdig/0.22.0/lib/netcoreapp3.1/Markdig.dll" />
+    <ReferencePath Include="/home/user/.nuget/packages/markdig.wpf/0.5.0.1/lib/net5.0-windows7.0/Markdig.Wpf.dll" />
+    <ReferencePath Include="/home/user/.nuget/packages/microsoft.bcl.cryptography/10.0.2/lib/net10.0/Microsoft.Bcl.Cryptography.dll" />
+    <ReferencePath Include="/home/user/.dotnet/packs/Microsoft.NETCore.App.Ref/10.0.12/ref/net10.0/Microsoft.CSharp.dll" />
+    <ReferencePath Include="/home/user/.nuget/packages/microsoft.data.sqlite.core/10.0.9/lib/net8.0/Microsoft.Data.Sqlite.dll" />
+    <ReferencePath Include="/home/user/.nuget/packages/microsoft.extensions.configuration.abstractions/10.0.9/lib/net10.0/Microsoft.Extensions.Configuration.Abstractions.dll" />
+    <ReferencePath Include="/home/user/.nuget/packages/microsoft.extensions.configuration.binder/10.0.9/lib/net10.0/Microsoft.Extensions.Configuration.Binder.dll" />
+    <ReferencePath Include="/home/user/.nuget/packages/microsoft.extensions.configuration/10.0.9/lib/net10.0/Microsoft.Extensions.Configuration.dll" />
+    <ReferencePath Include="/home/user/.nuget/packages/microsoft.extensions.dependencyinjection.abstractions/10.0.9/lib/net10.0/Microsoft.Extensions.DependencyInjection.Abstractions.dll" />
+    <ReferencePath Include="/home/user/.nuget/packages/microsoft.extensions.dependencyinjection/10.0.9/lib/net10.0/Microsoft.Extensions.DependencyInjection.dll" />
+    <ReferencePath Include="/home/user/.nuget/packages/microsoft.extensions.diagnostics.abstractions/10.0.9/lib/net10.0/Microsoft.Extensions.Diagnostics.Abstractions.dll" />
+    <ReferencePath Include="/home/user/.nuget/packages/microsoft.extensions.diagnostics/10.0.9/lib/net10.0/Microsoft.Extensions.Diagnostics.dll" />
+    <ReferencePath Include="/home/user/.nuget/packages/microsoft.extensions.http/10.0.9/lib/net10.0/Microsoft.Extensions.Http.dll" />
+    <ReferencePath Include="/home/user/.nuget/packages/microsoft.extensions.logging.abstractions/10.0.9/lib/net10.0/Microsoft.Extensions.Logging.Abstractions.dll" />
+    <ReferencePath Include="/home/user/.nuget/packages/microsoft.extensions.logging/10.0.9/lib/net10.0/Microsoft.Extensions.Logging.dll" />
+    <ReferencePath Include="/home/user/.nuget/packages/microsoft.extensions.options.configurationextensions/10.0.9/lib/net10.0/Microsoft.Extensions.Options.ConfigurationExtensions.dll" />
+    <ReferencePath Include="/home/user/.nuget/packages/microsoft.extensions.options/10.0.9/lib/net10.0/Microsoft.Extensions.Options.dll" />
+    <ReferencePath Include="/home/user/.nuget/packages/microsoft.extensions.primitives/10.0.9/lib/net10.0/Microsoft.Extensions.Primitives.dll" />
+    <ReferencePath Include="/home/user/.nuget/packages/microsoft.identitymodel.abstractions/8.19.1/lib/net10.0/Microsoft.IdentityModel.Abstractions.dll" />
+    <ReferencePath Include="/home/user/.nuget/packages/microsoft.identitymodel.jsonwebtokens/8.19.1/lib/net10.0/Microsoft.IdentityModel.JsonWebTokens.dll" />
+    <ReferencePath Include="/home/user/.nuget/packages/microsoft.identitymodel.logging/8.19.1/lib/net10.0/Microsoft.IdentityModel.Logging.dll" />
+    <ReferencePath Include="/home/user/.nuget/packages/microsoft.identitymodel.tokens/8.19.1/lib/net10.0/Microsoft.IdentityModel.Tokens.dll" />
+    <ReferencePath Include="/home/user/.dotnet/packs/Microsoft.NETCore.App.Ref/10.0.12/ref/net10.0/Microsoft.VisualBasic.Core.dll" />
+    <ReferencePath Include="/home/user/.nuget/packages/microsoft.windowsdesktop.app.ref/10.0.12/ref/net10.0/Microsoft.VisualBasic.dll" />
+    <ReferencePath Include="/home/user/.nuget/packages/microsoft.windowsdesktop.app.ref/10.0.12/ref/net10.0/Microsoft.VisualBasic.Forms.dll" />
+    <ReferencePath Include="/home/user/.nuget/packages/microsoft.visualstudio.threading.only/17.14.15/lib/net8.0-windows7.0/Microsoft.VisualStudio.Threading.dll" />
+    <ReferencePath Include="/home/user/.nuget/packages/microsoft.visualstudio.validation/17.8.8/lib/net6.0/Microsoft.VisualStudio.Validation.dll" />
+    <ReferencePath Include="/home/user/.dotnet/packs/Microsoft.NETCore.App.Ref/10.0.12/ref/net10.0/Microsoft.Win32.Primitives.dll" />
+    <ReferencePath Include="/home/user/.nuget/packages/microsoft.windowsdesktop.app.ref/10.0.12/ref/net10.0/Microsoft.Win32.Registry.AccessControl.dll" />
+    <ReferencePath Include="/home/user/.dotnet/packs/Microsoft.NETCore.App.Ref/10.0.12/ref/net10.0/Microsoft.Win32.Registry.dll" />
+    <ReferencePath Include="/home/user/.nuget/packages/microsoft.windowsdesktop.app.ref/10.0.12/ref/net10.0/Microsoft.Win32.SystemEvents.dll" />
+    <ReferencePath Include="/home/user/.nuget/packages/microsoft.xaml.behaviors.wpf/1.1.142/lib/net8.0-windows7.0/Microsoft.Xaml.Behaviors.dll" />
+    <ReferencePath Include="/home/user/.dotnet/packs/Microsoft.NETCore.App.Ref/10.0.12/ref/net10.0/mscorlib.dll" />
+    <ReferencePath Include="/home/user/.nuget/packages/naudio.asio/2.3.0/lib/net8.0-windows7.0/NAudio.Asio.dll" />
+    <ReferencePath Include="/home/user/.nuget/packages/naudio.core/2.3.0/lib/netstandard2.0/NAudio.Core.dll" />
+    <ReferencePath Include="/home/user/.nuget/packages/naudio/2.3.0/lib/net6.0-windows7.0/NAudio.dll" />
+    <ReferencePath Include="/home/user/.nuget/packages/naudio.midi/2.3.0/lib/netstandard2.0/NAudio.Midi.dll" />
+    <ReferencePath Include="/home/user/.nuget/packages/naudio.wasapi/2.3.0/lib/netstandard2.0/NAudio.Wasapi.dll" />
+    <ReferencePath Include="/home/user/.nuget/packages/naudio.winforms/2.3.0/lib/netcoreapp3.1/NAudio.WinForms.dll" />
+    <ReferencePath Include="/home/user/.nuget/packages/naudio.winmm/2.3.0/lib/net6.0/NAudio.WinMM.dll" />
+    <ReferencePath Include="/home/user/.dotnet/packs/Microsoft.NETCore.App.Ref/10.0.12/ref/net10.0/netstandard.dll" />
+    <ReferencePath Include="/home/user/Doubao/chats/38445348869032450/pclce_work/PCL2-CE/PCL.Core/bin/Release-AnyCPU/net10.0-windows/PCL.Core.dll" />
+    <ReferencePath Include="/home/user/.nuget/packages/pipelines.extensions/1.1.0/lib/net8.0/Pipelines.Extensions.dll" />
+    <ReferencePath Include="/home/user/.nuget/packages/plaintoolkit.cngprotecteddata/2.1.0/lib/net8.0/PlainToolkit.CngProtectedData.dll" />
+    <ReferencePath Include="/home/user/.nuget/packages/polly.core/8.7.0/lib/net8.0/Polly.Core.dll" />
+    <ReferencePath Include="/home/user/.nuget/packages/polly/8.7.0/lib/net6.0/Polly.dll" />
+    <ReferencePath Include="/home/user/.nuget/packages/microsoft.windowsdesktop.app.ref/10.0.12/ref/net10.0/PresentationCore.dll" />
+    <ReferencePath Include="/home/user/.nuget/packages/microsoft.windowsdesktop.app.ref/10.0.12/ref/net10.0/PresentationFramework.Aero.dll" />
+    <ReferencePath Include="/home/user/.nuget/packages/microsoft.windowsdesktop.app.ref/10.0.12/ref/net10.0/PresentationFramework.Aero2.dll" />
+    <ReferencePath Include="/home/user/.nuget/packages/microsoft.windowsdesktop.app.ref/10.0.12/ref/net10.0/PresentationFramework.AeroLite.dll" />
+    <ReferencePath Include="/home/user/.nuget/packages/microsoft.windowsdesktop.app.ref/10.0.12/ref/net10.0/PresentationFramework.Classic.dll" />
+    <ReferencePath Include="/home/user/.nuget/packages/microsoft.windowsdesktop.app.ref/10.0.12/ref/net10.0/PresentationFramework.dll" />
+    <ReferencePath Include="/home/user/.nuget/packages/microsoft.windowsdesktop.app.ref/10.0.12/ref/net10.0/PresentationFramework.Luna.dll" />
+    <ReferencePath Include="/home/user/.nuget/packages/microsoft.windowsdesktop.app.ref/10.0.12/ref/net10.0/PresentationFramework.Royale.dll" />
+    <ReferencePath Include="/home/user/.nuget/packages/microsoft.windowsdesktop.app.ref/10.0.12/ref/net10.0/PresentationUI.dll" />
+    <ReferencePath Include="/home/user/.nuget/packages/protobuf-net.core/3.2.56/lib/net8.0/protobuf-net.Core.dll" />
+    <ReferencePath Include="/home/user/.nuget/packages/protobuf-net/3.2.56/lib/net8.0/protobuf-net.dll" />
+    <ReferencePath Include="/home/user/.nuget/packages/microsoft.windowsdesktop.app.ref/10.0.12/ref/net10.0/ReachFramework.dll" />
+    <ReferencePath Include="/home/user/.nuget/packages/sentry/6.6.0/lib/net10.0/Sentry.dll" />
+    <ReferencePath Include="/home/user/.nuget/packages/socks5/1.1.0/lib/net8.0/Socks5.dll" />
+    <ReferencePath Include="/home/user/.nuget/packages/sqlitepclraw.config.e_sqlite3/3.0.3/lib/net8.0/SQLitePCLRaw.batteries_v2.dll" />
+    <ReferencePath Include="/home/user/.nuget/packages/sqlitepclraw.core/3.0.3/lib/net8.0/SQLitePCLRaw.core.dll" />
+    <ReferencePath Include="/home/user/.nuget/packages/sqlitepclraw.provider.e_sqlite3/3.0.3/lib/net8.0-windows7.0/SQLitePCLRaw.provider.e_sqlite3.dll" />
+    <ReferencePath Include="/home/user/.nuget/packages/stun.net/10.0.6/lib/net10.0/STUN.dll" />
+    <ReferencePath Include="/home/user/.dotnet/packs/Microsoft.NETCore.App.Ref/10.0.12/ref/net10.0/System.AppContext.dll" />
+    <ReferencePath Include="/home/user/.dotnet/packs/Microsoft.NETCore.App.Ref/10.0.12/ref/net10.0/System.Buffers.dll" />
+    <ReferencePath Include="/home/user/.nuget/packages/microsoft.windowsdesktop.app.ref/10.0.12/ref/net10.0/System.CodeDom.dll" />
+    <ReferencePath Include="/home/user/.dotnet/packs/Microsoft.NETCore.App.Ref/10.0.12/ref/net10.0/System.Collections.Concurrent.dll" />
+    <ReferencePath Include="/home/user/.dotnet/packs/Microsoft.NETCore.App.Ref/10.0.12/ref/net10.0/System.Collections.dll" />
+    <ReferencePath Include="/home/user/.dotnet/packs/Microsoft.NETCore.App.Ref/10.0.12/ref/net10.0/System.Collections.Immutable.dll" />
+    <ReferencePath Include="/home/user/.dotnet/packs/Microsoft.NETCore.App.Ref/10.0.12/ref/net10.0/System.Collections.NonGeneric.dll" />
+    <ReferencePath Include="/home/user/.dotnet/packs/Microsoft.NETCore.App.Ref/10.0.12/ref/net10.0/System.Collections.Specialized.dll" />
+    <ReferencePath Include="/home/user/.dotnet/packs/Microsoft.NETCore.App.Ref/10.0.12/ref/net10.0/System.ComponentModel.Annotations.dll" />
+    <ReferencePath Include="/home/user/.dotnet/packs/Microsoft.NETCore.App.Ref/10.0.12/ref/net10.0/System.ComponentModel.DataAnnotations.dll" />
+    <ReferencePath Include="/home/user/.dotnet/packs/Microsoft.NETCore.App.Ref/10.0.12/ref/net10.0/System.ComponentModel.dll" />
+    <ReferencePath Include="/home/user/.dotnet/packs/Microsoft.NETCore.App.Ref/10.0.12/ref/net10.0/System.ComponentModel.EventBasedAsync.dll" />
+    <ReferencePath Include="/home/user/.dotnet/packs/Microsoft.NETCore.App.Ref/10.0.12/ref/net10.0/System.ComponentModel.Primitives.dll" />
+    <ReferencePath Include="/home/user/.dotnet/packs/Microsoft.NETCore.App.Ref/10.0.12/ref/net10.0/System.ComponentModel.TypeConverter.dll" />
+    <ReferencePath Include="/home/user/.nuget/packages/microsoft.windowsdesktop.app.ref/10.0.12/ref/net10.0/System.Configuration.ConfigurationManager.dll" />
+    <ReferencePath Include="/home/user/.dotnet/packs/Microsoft.NETCore.App.Ref/10.0.12/ref/net10.0/System.Configuration.dll" />
+    <ReferencePath Include="/home/user/.dotnet/packs/Microsoft.NETCore.App.Ref/10.0.12/ref/net10.0/System.Console.dll" />
+    <ReferencePath Include="/home/user/.dotnet/packs/Microsoft.NETCore.App.Ref/10.0.12/ref/net10.0/System.Core.dll" />
+    <ReferencePath Include="/home/user/.dotnet/packs/Microsoft.NETCore.App.Ref/10.0.12/ref/net10.0/System.Data.Common.dll" />
+    <ReferencePath Include="/home/user/.dotnet/packs/Microsoft.NETCore.App.Ref/10.0.12/ref/net10.0/System.Data.DataSetExtensions.dll" />
+    <ReferencePath Include="/home/user/.dotnet/packs/Microsoft.NETCore.App.Ref/10.0.12/ref/net10.0/System.Data.dll" />
+    <ReferencePath Include="/home/user/.nuget/packages/microsoft.windowsdesktop.app.ref/10.0.12/ref/net10.0/System.Design.dll" />
+    <ReferencePath Include="/home/user/.dotnet/packs/Microsoft.NETCore.App.Ref/10.0.12/ref/net10.0/System.Diagnostics.Contracts.dll" />
+    <ReferencePath Include="/home/user/.dotnet/packs/Microsoft.NETCore.App.Ref/10.0.12/ref/net10.0/System.Diagnostics.Debug.dll" />
+    <ReferencePath Include="/home/user/.dotnet/packs/Microsoft.NETCore.App.Ref/10.0.12/ref/net10.0/System.Diagnostics.DiagnosticSource.dll" />
+    <ReferencePath Include="/home/user/.nuget/packages/microsoft.windowsdesktop.app.ref/10.0.12/ref/net10.0/System.Diagnostics.EventLog.dll" />
+    <ReferencePath Include="/home/user/.dotnet/packs/Microsoft.NETCore.App.Ref/10.0.12/ref/net10.0/System.Diagnostics.FileVersionInfo.dll" />
+    <ReferencePath Include="/home/user/.nuget/packages/microsoft.windowsdesktop.app.ref/10.0.12/ref/net10.0/System.Diagnostics.PerformanceCounter.dll" />
+    <ReferencePath Include="/home/user/.dotnet/packs/Microsoft.NETCore.App.Ref/10.0.12/ref/net10.0/System.Diagnostics.Process.dll" />
+    <ReferencePath Include="/home/user/.dotnet/packs/Microsoft.NETCore.App.Ref/10.0.12/ref/net10.0/System.Diagnostics.StackTrace.dll" />
+    <ReferencePath Include="/home/user/.dotnet/packs/Microsoft.NETCore.App.Ref/10.0.12/ref/net10.0/System.Diagnostics.TextWriterTraceListener.dll" />
+    <ReferencePath Include="/home/user/.dotnet/packs/Microsoft.NETCore.App.Ref/10.0.12/ref/net10.0/System.Diagnostics.Tools.dll" />
+    <ReferencePath Include="/home/user/.dotnet/packs/Microsoft.NETCore.App.Ref/10.0.12/ref/net10.0/System.Diagnostics.TraceSource.dll" />
+    <ReferencePath Include="/home/user/.dotnet/packs/Microsoft.NETCore.App.Ref/10.0.12/ref/net10.0/System.Diagnostics.Tracing.dll" />
+    <ReferencePath Include="/home/user/.nuget/packages/microsoft.windowsdesktop.app.ref/10.0.12/ref/net10.0/System.DirectoryServices.dll" />
+    <ReferencePath Include="/home/user/.dotnet/packs/Microsoft.NETCore.App.Ref/10.0.12/ref/net10.0/System.dll" />
+    <ReferencePath Include="/home/user/.nuget/packages/microsoft.windowsdesktop.app.ref/10.0.12/ref/net10.0/System.Drawing.Common.dll" />
+    <ReferencePath Include="/home/user/.nuget/packages/microsoft.windowsdesktop.app.ref/10.0.12/ref/net10.0/System.Drawing.Design.dll" />
+    <ReferencePath Include="/home/user/.nuget/packages/microsoft.windowsdesktop.app.ref/10.0.12/ref/net10.0/System.Drawing.dll" />
+    <ReferencePath Include="/home/user/.dotnet/packs/Microsoft.NETCore.App.Ref/10.0.12/ref/net10.0/System.Drawing.Primitives.dll" />
+    <ReferencePath Include="/home/user/.dotnet/packs/Microsoft.NETCore.App.Ref/10.0.12/ref/net10.0/System.Dynamic.Runtime.dll" />
+    <ReferencePath Include="/home/user/.dotnet/packs/Microsoft.NETCore.App.Ref/10.0.12/ref/net10.0/System.Formats.Asn1.dll" />
+    <ReferencePath Include="/home/user/.nuget/packages/microsoft.windowsdesktop.app.ref/10.0.12/ref/net10.0/System.Formats.Nrbf.dll" />
+    <ReferencePath Include="/home/user/.dotnet/packs/Microsoft.NETCore.App.Ref/10.0.12/ref/net10.0/System.Formats.Tar.dll" />
+    <ReferencePath Include="/home/user/.dotnet/packs/Microsoft.NETCore.App.Ref/10.0.12/ref/net10.0/System.Globalization.Calendars.dll" />
+    <ReferencePath Include="/home/user/.dotnet/packs/Microsoft.NETCore.App.Ref/10.0.12/ref/net10.0/System.Globalization.dll" />
+    <ReferencePath Include="/home/user/.dotnet/packs/Microsoft.NETCore.App.Ref/10.0.12/ref/net10.0/System.Globalization.Extensions.dll" />
+    <ReferencePath Include="/home/user/.nuget/packages/system.identitymodel.tokens.jwt/8.19.1/lib/net10.0/System.IdentityModel.Tokens.Jwt.dll" />
+    <ReferencePath Include="/home/user/.dotnet/packs/Microsoft.NETCore.App.Ref/10.0.12/ref/net10.0/System.IO.Compression.Brotli.dll" />
+    <ReferencePath Include="/home/user/.dotnet/packs/Microsoft.NETCore.App.Ref/10.0.12/ref/net10.0/System.IO.Compression.dll" />
+    <ReferencePath Include="/home/user/.dotnet/packs/Microsoft.NETCore.App.Ref/10.0.12/ref/net10.0/System.IO.Compression.FileSystem.dll" />
+    <ReferencePath Include="/home/user/.dotnet/packs/Microsoft.NETCore.App.Ref/10.0.12/ref/net10.0/System.IO.Compression.ZipFile.dll" />
+    <ReferencePath Include="/home/user/.dotnet/packs/Microsoft.NETCore.App.Ref/10.0.12/ref/net10.0/System.IO.dll" />
+    <ReferencePath Include="/home/user/.dotnet/packs/Microsoft.NETCore.App.Ref/10.0.12/ref/net10.0/System.IO.FileSystem.AccessControl.dll" />
+    <ReferencePath Include="/home/user/.dotnet/packs/Microsoft.NETCore.App.Ref/10.0.12/ref/net10.0/System.IO.FileSystem.dll" />
+    <ReferencePath Include="/home/user/.dotnet/packs/Microsoft.NETCore.App.Ref/10.0.12/ref/net10.0/System.IO.FileSystem.DriveInfo.dll" />
+    <ReferencePath Include="/home/user/.dotnet/packs/Microsoft.NETCore.App.Ref/10.0.12/ref/net10.0/System.IO.FileSystem.Primitives.dll" />
+    <ReferencePath Include="/home/user/.dotnet/packs/Microsoft.NETCore.App.Ref/10.0.12/ref/net10.0/System.IO.FileSystem.Watcher.dll" />
+    <ReferencePath Include="/home/user/.dotnet/packs/Microsoft.NETCore.App.Ref/10.0.12/ref/net10.0/System.IO.IsolatedStorage.dll" />
+    <ReferencePath Include="/home/user/.dotnet/packs/Microsoft.NETCore.App.Ref/10.0.12/ref/net10.0/System.IO.MemoryMappedFiles.dll" />
+    <ReferencePath Include="/home/user/.nuget/packages/microsoft.windowsdesktop.app.ref/10.0.12/ref/net10.0/System.IO.Packaging.dll" />
+    <ReferencePath Include="/home/user/.dotnet/packs/Microsoft.NETCore.App.Ref/10.0.12/ref/net10.0/System.IO.Pipelines.dll" />
+    <ReferencePath Include="/home/user/.dotnet/packs/Microsoft.NETCore.App.Ref/10.0.12/ref/net10.0/System.IO.Pipes.AccessControl.dll" />
+    <ReferencePath Include="/home/user/.dotnet/packs/Microsoft.NETCore.App.Ref/10.0.12/ref/net10.0/System.IO.Pipes.dll" />
+    <ReferencePath Include="/home/user/.dotnet/packs/Microsoft.NETCore.App.Ref/10.0.12/ref/net10.0/System.IO.UnmanagedMemoryStream.dll" />
+    <ReferencePath Include="/home/user/.dotnet/packs/Microsoft.NETCore.App.Ref/10.0.12/ref/net10.0/System.Linq.AsyncEnumerable.dll" />
+    <ReferencePath Include="/home/user/.dotnet/packs/Microsoft.NETCore.App.Ref/10.0.12/ref/net10.0/System.Linq.dll" />
+    <ReferencePath Include="/home/user/.dotnet/packs/Microsoft.NETCore.App.Ref/10.0.12/ref/net10.0/System.Linq.Expressions.dll" />
+    <ReferencePath Include="/home/user/.dotnet/packs/Microsoft.NETCore.App.Ref/10.0.12/ref/net10.0/System.Linq.Parallel.dll" />
+    <ReferencePath Include="/home/user/.dotnet/packs/Microsoft.NETCore.App.Ref/10.0.12/ref/net10.0/System.Linq.Queryable.dll" />
+    <ReferencePath Include="/home/user/.nuget/packages/system.management/10.0.9/lib/net10.0/System.Management.dll" />
+    <ReferencePath Include="/home/user/.dotnet/packs/Microsoft.NETCore.App.Ref/10.0.12/ref/net10.0/System.Memory.dll" />
+    <ReferencePath Include="/home/user/.dotnet/packs/Microsoft.NETCore.App.Ref/10.0.12/ref/net10.0/System.Net.dll" />
+    <ReferencePath Include="/home/user/.dotnet/packs/Microsoft.NETCore.App.Ref/10.0.12/ref/net10.0/System.Net.Http.dll" />
+    <ReferencePath Include="/home/user/.dotnet/packs/Microsoft.NETCore.App.Ref/10.0.12/ref/net10.0/System.Net.Http.Json.dll" />
+    <ReferencePath Include="/home/user/.dotnet/packs/Microsoft.NETCore.App.Ref/10.0.12/ref/net10.0/System.Net.HttpListener.dll" />
+    <ReferencePath Include="/home/user/.dotnet/packs/Microsoft.NETCore.App.Ref/10.0.12/ref/net10.0/System.Net.Mail.dll" />
+    <ReferencePath Include="/home/user/.dotnet/packs/Microsoft.NETCore.App.Ref/10.0.12/ref/net10.0/System.Net.NameResolution.dll" />
+    <ReferencePath Include="/home/user/.dotnet/packs/Microsoft.NETCore.App.Ref/10.0.12/ref/net10.0/System.Net.NetworkInformation.dll" />
+    <ReferencePath Include="/home/user/.dotnet/packs/Microsoft.NETCore.App.Ref/10.0.12/ref/net10.0/System.Net.Ping.dll" />
+    <ReferencePath Include="/home/user/.dotnet/packs/Microsoft.NETCore.App.Ref/10.0.12/ref/net10.0/System.Net.Primitives.dll" />
+    <ReferencePath Include="/home/user/.dotnet/packs/Microsoft.NETCore.App.Ref/10.0.12/ref/net10.0/System.Net.Quic.dll" />
+    <ReferencePath Include="/home/user/.dotnet/packs/Microsoft.NETCore.App.Ref/10.0.12/ref/net10.0/System.Net.Requests.dll" />
+    <ReferencePath Include="/home/user/.dotnet/packs/Microsoft.NETCore.App.Ref/10.0.12/ref/net10.0/System.Net.Security.dll" />
+    <ReferencePath Include="/home/user/.dotnet/packs/Microsoft.NETCore.App.Ref/10.0.12/ref/net10.0/System.Net.ServerSentEvents.dll" />
+    <ReferencePath Include="/home/user/.dotnet/packs/Microsoft.NETCore.App.Ref/10.0.12/ref/net10.0/System.Net.ServicePoint.dll" />
+    <ReferencePath Include="/home/user/.dotnet/packs/Microsoft.NETCore.App.Ref/10.0.12/ref/net10.0/System.Net.Sockets.dll" />
+    <ReferencePath Include="/home/user/.dotnet/packs/Microsoft.NETCore.App.Ref/10.0.12/ref/net10.0/System.Net.WebClient.dll" />
+    <ReferencePath Include="/home/user/.dotnet/packs/Microsoft.NETCore.App.Ref/10.0.12/ref/net10.0/System.Net.WebHeaderCollection.dll" />
+    <ReferencePath Include="/home/user/.dotnet/packs/Microsoft.NETCore.App.Ref/10.0.12/ref/net10.0/System.Net.WebProxy.dll" />
+    <ReferencePath Include="/home/user/.dotnet/packs/Microsoft.NETCore.App.Ref/10.0.12/ref/net10.0/System.Net.WebSockets.Client.dll" />
+    <ReferencePath Include="/home/user/.dotnet/packs/Microsoft.NETCore.App.Ref/10.0.12/ref/net10.0/System.Net.WebSockets.dll" />
+    <ReferencePath Include="/home/user/.dotnet/packs/Microsoft.NETCore.App.Ref/10.0.12/ref/net10.0/System.Numerics.dll" />
+    <ReferencePath Include="/home/user/.dotnet/packs/Microsoft.NETCore.App.Ref/10.0.12/ref/net10.0/System.Numerics.Vectors.dll" />
+    <ReferencePath Include="/home/user/.dotnet/packs/Microsoft.NETCore.App.Ref/10.0.12/ref/net10.0/System.ObjectModel.dll" />
+    <ReferencePath Include="/home/user/.nuget/packages/microsoft.windowsdesktop.app.ref/10.0.12/ref/net10.0/System.Printing.dll" />
+    <ReferencePath Include="/home/user/.nuget/packages/microsoft.windowsdesktop.app.ref/10.0.12/ref/net10.0/System.Private.Windows.Core.dll" />
+    <ReferencePath Include="/home/user/.nuget/packages/microsoft.windowsdesktop.app.ref/10.0.12/ref/net10.0/System.Private.Windows.GdiPlus.dll" />
+    <ReferencePath Include="/home/user/.dotnet/packs/Microsoft.NETCore.App.Ref/10.0.12/ref/net10.0/System.Reflection.DispatchProxy.dll" />
+    <ReferencePath Include="/home/user/.dotnet/packs/Microsoft.NETCore.App.Ref/10.0.12/ref/net10.0/System.Reflection.dll" />
+    <ReferencePath Include="/home/user/.dotnet/packs/Microsoft.NETCore.App.Ref/10.0.12/ref/net10.0/System.Reflection.Emit.dll" />
+    <ReferencePath Include="/home/user/.dotnet/packs/Microsoft.NETCore.App.Ref/10.0.12/ref/net10.0/System.Reflection.Emit.ILGeneration.dll" />
+    <ReferencePath Include="/home/user/.dotnet/packs/Microsoft.NETCore.App.Ref/10.0.12/ref/net10.0/System.Reflection.Emit.Lightweight.dll" />
+    <ReferencePath Include="/home/user/.dotnet/packs/Microsoft.NETCore.App.Ref/10.0.12/ref/net10.0/System.Reflection.Extensions.dll" />
+    <ReferencePath Include="/home/user/.dotnet/packs/Microsoft.NETCore.App.Ref/10.0.12/ref/net10.0/System.Reflection.Metadata.dll" />
+    <ReferencePath Include="/home/user/.dotnet/packs/Microsoft.NETCore.App.Ref/10.0.12/ref/net10.0/System.Reflection.Primitives.dll" />
+    <ReferencePath Include="/home/user/.dotnet/packs/Microsoft.NETCore.App.Ref/10.0.12/ref/net10.0/System.Reflection.TypeExtensions.dll" />
+    <ReferencePath Include="/home/user/.nuget/packages/microsoft.windowsdesktop.app.ref/10.0.12/ref/net10.0/System.Resources.Extensions.dll" />
+    <ReferencePath Include="/home/user/.dotnet/packs/Microsoft.NETCore.App.Ref/10.0.12/ref/net10.0/System.Resources.Reader.dll" />
+    <ReferencePath Include="/home/user/.dotnet/packs/Microsoft.NETCore.App.Ref/10.0.12/ref/net10.0/System.Resources.ResourceManager.dll" />
+    <ReferencePath Include="/home/user/.dotnet/packs/Microsoft.NETCore.App.Ref/10.0.12/ref/net10.0/System.Resources.Writer.dll" />
+    <ReferencePath Include="/home/user/.nuget/packages/system.runtime.caching/6.0.0/lib/net6.0/System.Runtime.Caching.dll" />
+    <ReferencePath Include="/home/user/.dotnet/packs/Microsoft.NETCore.App.Ref/10.0.12/ref/net10.0/System.Runtime.CompilerServices.Unsafe.dll" />
+    <ReferencePath Include="/home/user/.dotnet/packs/Microsoft.NETCore.App.Ref/10.0.12/ref/net10.0/System.Runtime.CompilerServices.VisualC.dll" />
+    <ReferencePath Include="/home/user/.dotnet/packs/Microsoft.NETCore.App.Ref/10.0.12/ref/net10.0/System.Runtime.dll" />
+    <ReferencePath Include="/home/user/.dotnet/packs/Microsoft.NETCore.App.Ref/10.0.12/ref/net10.0/System.Runtime.Extensions.dll" />
+    <ReferencePath Include="/home/user/.dotnet/packs/Microsoft.NETCore.App.Ref/10.0.12/ref/net10.0/System.Runtime.Handles.dll" />
+    <ReferencePath Include="/home/user/.dotnet/packs/Microsoft.NETCore.App.Ref/10.0.12/ref/net10.0/System.Runtime.InteropServices.dll" />
+    <ReferencePath Include="/home/user/.dotnet/packs/Microsoft.NETCore.App.Ref/10.0.12/ref/net10.0/System.Runtime.InteropServices.JavaScript.dll" />
+    <ReferencePath Include="/home/user/.dotnet/packs/Microsoft.NETCore.App.Ref/10.0.12/ref/net10.0/System.Runtime.InteropServices.RuntimeInformation.dll" />
+    <ReferencePath Include="/home/user/.dotnet/packs/Microsoft.NETCore.App.Ref/10.0.12/ref/net10.0/System.Runtime.Intrinsics.dll" />
+    <ReferencePath Include="/home/user/.dotnet/packs/Microsoft.NETCore.App.Ref/10.0.12/ref/net10.0/System.Runtime.Loader.dll" />
+    <ReferencePath Include="/home/user/.dotnet/packs/Microsoft.NETCore.App.Ref/10.0.12/ref/net10.0/System.Runtime.Numerics.dll" />
+    <ReferencePath Include="/home/user/.dotnet/packs/Microsoft.NETCore.App.Ref/10.0.12/ref/net10.0/System.Runtime.Serialization.dll" />
+    <ReferencePath Include="/home/user/.dotnet/packs/Microsoft.NETCore.App.Ref/10.0.12/ref/net10.0/System.Runtime.Serialization.Formatters.dll" />
+    <ReferencePath Include="/home/user/.dotnet/packs/Microsoft.NETCore.App.Ref/10.0.12/ref/net10.0/System.Runtime.Serialization.Json.dll" />
+    <ReferencePath Include="/home/user/.dotnet/packs/Microsoft.NETCore.App.Ref/10.0.12/ref/net10.0/System.Runtime.Serialization.Primitives.dll" />
+    <ReferencePath Include="/home/user/.dotnet/packs/Microsoft.NETCore.App.Ref/10.0.12/ref/net10.0/System.Runtime.Serialization.Xml.dll" />
+    <ReferencePath Include="/home/user/.dotnet/packs/Microsoft.NETCore.App.Ref/10.0.12/ref/net10.0/System.Security.AccessControl.dll" />
+    <ReferencePath Include="/home/user/.dotnet/packs/Microsoft.NETCore.App.Ref/10.0.12/ref/net10.0/System.Security.Claims.dll" />
+    <ReferencePath Include="/home/user/.dotnet/packs/Microsoft.NETCore.App.Ref/10.0.12/ref/net10.0/System.Security.Cryptography.Algorithms.dll" />
+    <ReferencePath Include="/home/user/.dotnet/packs/Microsoft.NETCore.App.Ref/10.0.12/ref/net10.0/System.Security.Cryptography.Cng.dll" />
+    <ReferencePath Include="/home/user/.dotnet/packs/Microsoft.NETCore.App.Ref/10.0.12/ref/net10.0/System.Security.Cryptography.Csp.dll" />
+    <ReferencePath Include="/home/user/.dotnet/packs/Microsoft.NETCore.App.Ref/10.0.12/ref/net10.0/System.Security.Cryptography.dll" />
+    <ReferencePath Include="/home/user/.dotnet/packs/Microsoft.NETCore.App.Ref/10.0.12/ref/net10.0/System.Security.Cryptography.Encoding.dll" />
+    <ReferencePath Include="/home/user/.dotnet/packs/Microsoft.NETCore.App.Ref/10.0.12/ref/net10.0/System.Security.Cryptography.OpenSsl.dll" />
+    <ReferencePath Include="/home/user/.nuget/packages/microsoft.windowsdesktop.app.ref/10.0.12/ref/net10.0/System.Security.Cryptography.Pkcs.dll" />
+    <ReferencePath Include="/home/user/.dotnet/packs/Microsoft.NETCore.App.Ref/10.0.12/ref/net10.0/System.Security.Cryptography.Primitives.dll" />
+    <ReferencePath Include="/home/user/.nuget/packages/microsoft.windowsdesktop.app.ref/10.0.12/ref/net10.0/System.Security.Cryptography.ProtectedData.dll" />
+    <ReferencePath Include="/home/user/.dotnet/packs/Microsoft.NETCore.App.Ref/10.0.12/ref/net10.0/System.Security.Cryptography.X509Certificates.dll" />
+    <ReferencePath Include="/home/user/.nuget/packages/microsoft.windowsdesktop.app.ref/10.0.12/ref/net10.0/System.Security.Cryptography.Xml.dll" />
+    <ReferencePath Include="/home/user/.dotnet/packs/Microsoft.NETCore.App.Ref/10.0.12/ref/net10.0/System.Security.dll" />
+    <ReferencePath Include="/home/user/.nuget/packages/microsoft.windowsdesktop.app.ref/10.0.12/ref/net10.0/System.Security.Permissions.dll" />
+    <ReferencePath Include="/home/user/.dotnet/packs/Microsoft.NETCore.App.Ref/10.0.12/ref/net10.0/System.Security.Principal.dll" />
+    <ReferencePath Include="/home/user/.dotnet/packs/Microsoft.NETCore.App.Ref/10.0.12/ref/net10.0/System.Security.Principal.Windows.dll" />
+    <ReferencePath Include="/home/user/.dotnet/packs/Microsoft.NETCore.App.Ref/10.0.12/ref/net10.0/System.Security.SecureString.dll" />
+    <ReferencePath Include="/home/user/.dotnet/packs/Microsoft.NETCore.App.Ref/10.0.12/ref/net10.0/System.ServiceModel.Web.dll" />
+    <ReferencePath Include="/home/user/.dotnet/packs/Microsoft.NETCore.App.Ref/10.0.12/ref/net10.0/System.ServiceProcess.dll" />
+    <ReferencePath Include="/home/user/.dotnet/packs/Microsoft.NETCore.App.Ref/10.0.12/ref/net10.0/System.Text.Encoding.CodePages.dll" />
+    <ReferencePath Include="/home/user/.dotnet/packs/Microsoft.NETCore.App.Ref/10.0.12/ref/net10.0/System.Text.Encoding.dll" />
+    <ReferencePath Include="/home/user/.dotnet/packs/Microsoft.NETCore.App.Ref/10.0.12/ref/net10.0/System.Text.Encoding.Extensions.dll" />
+    <ReferencePath Include="/home/user/.dotnet/packs/Microsoft.NETCore.App.Ref/10.0.12/ref/net10.0/System.Text.Encodings.Web.dll" />
+    <ReferencePath Include="/home/user/.dotnet/packs/Microsoft.NETCore.App.Ref/10.0.12/ref/net10.0/System.Text.Json.dll" />
+    <ReferencePath Include="/home/user/.dotnet/packs/Microsoft.NETCore.App.Ref/10.0.12/ref/net10.0/System.Text.RegularExpressions.dll" />
+    <ReferencePath Include="/home/user/.dotnet/packs/Microsoft.NETCore.App.Ref/10.0.12/ref/net10.0/System.Threading.AccessControl.dll" />
+    <ReferencePath Include="/home/user/.dotnet/packs/Microsoft.NETCore.App.Ref/10.0.12/ref/net10.0/System.Threading.Channels.dll" />
+    <ReferencePath Include="/home/user/.dotnet/packs/Microsoft.NETCore.App.Ref/10.0.12/ref/net10.0/System.Threading.dll" />
+    <ReferencePath Include="/home/user/.dotnet/packs/Microsoft.NETCore.App.Ref/10.0.12/ref/net10.0/System.Threading.Overlapped.dll" />
+    <ReferencePath Include="/home/user/.dotnet/packs/Microsoft.NETCore.App.Ref/10.0.12/ref/net10.0/System.Threading.Tasks.Dataflow.dll" />
+    <ReferencePath Include="/home/user/.dotnet/packs/Microsoft.NETCore.App.Ref/10.0.12/ref/net10.0/System.Threading.Tasks.dll" />
+    <ReferencePath Include="/home/user/.dotnet/packs/Microsoft.NETCore.App.Ref/10.0.12/ref/net10.0/System.Threading.Tasks.Extensions.dll" />
+    <ReferencePath Include="/home/user/.dotnet/packs/Microsoft.NETCore.App.Ref/10.0.12/ref/net10.0/System.Threading.Tasks.Parallel.dll" />
+    <ReferencePath Include="/home/user/.dotnet/packs/Microsoft.NETCore.App.Ref/10.0.12/ref/net10.0/System.Threading.Thread.dll" />
+    <ReferencePath Include="/home/user/.dotnet/packs/Microsoft.NETCore.App.Ref/10.0.12/ref/net10.0/System.Threading.ThreadPool.dll" />
+    <ReferencePath Include="/home/user/.dotnet/packs/Microsoft.NETCore.App.Ref/10.0.12/ref/net10.0/System.Threading.Timer.dll" />
+    <ReferencePath Include="/home/user/.dotnet/packs/Microsoft.NETCore.App.Ref/10.0.12/ref/net10.0/System.Transactions.dll" />
+    <ReferencePath Include="/home/user/.dotnet/packs/Microsoft.NETCore.App.Ref/10.0.12/ref/net10.0/System.Transactions.Local.dll" />
+    <ReferencePath Include="/home/user/.dotnet/packs/Microsoft.NETCore.App.Ref/10.0.12/ref/net10.0/System.ValueTuple.dll" />
+    <ReferencePath Include="/home/user/.dotnet/packs/Microsoft.NETCore.App.Ref/10.0.12/ref/net10.0/System.Web.dll" />
+    <ReferencePath Include="/home/user/.dotnet/packs/Microsoft.NETCore.App.Ref/10.0.12/ref/net10.0/System.Web.HttpUtility.dll" />
+    <ReferencePath Include="/home/user/.nuget/packages/microsoft.windowsdesktop.app.ref/10.0.12/ref/net10.0/System.Windows.Controls.Ribbon.dll" />
+    <ReferencePath Include="/home/user/.dotnet/packs/Microsoft.NETCore.App.Ref/10.0.12/ref/net10.0/System.Windows.dll" />
+    <ReferencePath Include="/home/user/.nuget/packages/microsoft.windowsdesktop.app.ref/10.0.12/ref/net10.0/System.Windows.Extensions.dll" />
+    <ReferencePath Include="/home/user/.nuget/packages/microsoft.windowsdesktop.app.ref/10.0.12/ref/net10.0/System.Windows.Forms.Design.dll" />
+    <ReferencePath Include="/home/user/.nuget/packages/microsoft.windowsdesktop.app.ref/10.0.12/ref/net10.0/System.Windows.Forms.Design.Editors.dll" />
+    <ReferencePath Include="/home/user/.nuget/packages/microsoft.windowsdesktop.app.ref/10.0.12/ref/net10.0/System.Windows.Forms.dll" />
+    <ReferencePath Include="/home/user/.nuget/packages/microsoft.windowsdesktop.app.ref/10.0.12/ref/net10.0/System.Windows.Forms.Primitives.dll" />
+    <ReferencePath Include="/home/user/.nuget/packages/microsoft.windowsdesktop.app.ref/10.0.12/ref/net10.0/System.Windows.Input.Manipulations.dll" />
+    <ReferencePath Include="/home/user/.nuget/packages/microsoft.windowsdesktop.app.ref/10.0.12/ref/net10.0/System.Windows.Presentation.dll" />
+    <ReferencePath Include="/home/user/.nuget/packages/microsoft.windowsdesktop.app.ref/10.0.12/ref/net10.0/System.Windows.Primitives.dll" />
+    <ReferencePath Include="/home/user/.nuget/packages/microsoft.windowsdesktop.app.ref/10.0.12/ref/net10.0/System.Xaml.dll" />
+    <ReferencePath Include="/home/user/.dotnet/packs/Microsoft.NETCore.App.Ref/10.0.12/ref/net10.0/System.Xml.dll" />
+    <ReferencePath Include="/home/user/.dotnet/packs/Microsoft.NETCore.App.Ref/10.0.12/ref/net10.0/System.Xml.Linq.dll" />
+    <ReferencePath Include="/home/user/.dotnet/packs/Microsoft.NETCore.App.Ref/10.0.12/ref/net10.0/System.Xml.ReaderWriter.dll" />
+    <ReferencePath Include="/home/user/.dotnet/packs/Microsoft.NETCore.App.Ref/10.0.12/ref/net10.0/System.Xml.Serialization.dll" />
+    <ReferencePath Include="/home/user/.dotnet/packs/Microsoft.NETCore.App.Ref/10.0.12/ref/net10.0/System.Xml.XDocument.dll" />
+    <ReferencePath Include="/home/user/.dotnet/packs/Microsoft.NETCore.App.Ref/10.0.12/ref/net10.0/System.Xml.XmlDocument.dll" />
+    <ReferencePath Include="/home/user/.dotnet/packs/Microsoft.NETCore.App.Ref/10.0.12/ref/net10.0/System.Xml.XmlSerializer.dll" />
+    <ReferencePath Include="/home/user/.dotnet/packs/Microsoft.NETCore.App.Ref/10.0.12/ref/net10.0/System.Xml.XPath.dll" />
+    <ReferencePath Include="/home/user/.dotnet/packs/Microsoft.NETCore.App.Ref/10.0.12/ref/net10.0/System.Xml.XPath.XDocument.dll" />
+    <ReferencePath Include="/home/user/.nuget/packages/microsoft.windowsdesktop.app.ref/10.0.12/ref/net10.0/UIAutomationClient.dll" />
+    <ReferencePath Include="/home/user/.nuget/packages/microsoft.windowsdesktop.app.ref/10.0.12/ref/net10.0/UIAutomationClientSideProviders.dll" />
+    <ReferencePath Include="/home/user/.nuget/packages/microsoft.windowsdesktop.app.ref/10.0.12/ref/net10.0/UIAutomationProvider.dll" />
+    <ReferencePath Include="/home/user/.nuget/packages/microsoft.windowsdesktop.app.ref/10.0.12/ref/net10.0/UIAutomationTypes.dll" />
+    <ReferencePath Include="/home/user/.nuget/packages/wacton.unicolour/8.0.0/lib/netstandard2.0/Wacton.Unicolour.dll" />
+    <ReferencePath Include="/home/user/.nuget/packages/microsoft.windowsdesktop.app.ref/10.0.12/ref/net10.0/WindowsBase.dll" />
+    <ReferencePath Include="/home/user/.nuget/packages/yamldotnet/18.1.0/lib/net10.0/YamlDotNet.dll" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="/home/user/Doubao/chats/38445348869032450/pclce_work/PCL2-CE/Plain Craft Launcher 2/obj/Release/net10.0-windows/win-x64/Controls/FontSelector.g.cs" />
+    <Compile Include="/home/user/Doubao/chats/38445348869032450/pclce_work/PCL2-CE/Plain Craft Launcher 2/obj/Release/net10.0-windows/win-x64/Controls/MinecraftServer.g.cs" />
+    <Compile Include="/home/user/Doubao/chats/38445348869032450/pclce_work/PCL2-CE/Plain Craft Launcher 2/obj/Release/net10.0-windows/win-x64/Controls/MinecraftServerQuery.g.cs" />
+    <Compile Include="/home/user/Doubao/chats/38445348869032450/pclce_work/PCL2-CE/Plain Craft Launcher 2/obj/Release/net10.0-windows/win-x64/Controls/MyButton.g.cs" />
+    <Compile Include="/home/user/Doubao/chats/38445348869032450/pclce_work/PCL2-CE/Plain Craft Launcher 2/obj/Release/net10.0-windows/win-x64/Controls/MyCheckBox.g.cs" />
+    <Compile Include="/home/user/Doubao/chats/38445348869032450/pclce_work/PCL2-CE/Plain Craft Launcher 2/obj/Release/net10.0-windows/win-x64/Controls/MyExtraButton.g.cs" />
+    <Compile Include="/home/user/Doubao/chats/38445348869032450/pclce_work/PCL2-CE/Plain Craft Launcher 2/obj/Release/net10.0-windows/win-x64/Controls/MyExtraTextButton.g.cs" />
+    <Compile Include="/home/user/Doubao/chats/38445348869032450/pclce_work/PCL2-CE/Plain Craft Launcher 2/obj/Release/net10.0-windows/win-x64/Controls/MyHint.g.cs" />
+    <Compile Include="/home/user/Doubao/chats/38445348869032450/pclce_work/PCL2-CE/Plain Craft Launcher 2/obj/Release/net10.0-windows/win-x64/Controls/MyIconButton.g.cs" />
+    <Compile Include="/home/user/Doubao/chats/38445348869032450/pclce_work/PCL2-CE/Plain Craft Launcher 2/obj/Release/net10.0-windows/win-x64/Controls/MyIconTextButton.g.cs" />
+    <Compile Include="/home/user/Doubao/chats/38445348869032450/pclce_work/PCL2-CE/Plain Craft Launcher 2/obj/Release/net10.0-windows/win-x64/Controls/MyListItem.g.cs" />
+    <Compile Include="/home/user/Doubao/chats/38445348869032450/pclce_work/PCL2-CE/Plain Craft Launcher 2/obj/Release/net10.0-windows/win-x64/Controls/MyLoading.g.cs" />
+    <Compile Include="/home/user/Doubao/chats/38445348869032450/pclce_work/PCL2-CE/Plain Craft Launcher 2/obj/Release/net10.0-windows/win-x64/Controls/MyMsg/MyMsgAuthServer.g.cs" />
+    <Compile Include="/home/user/Doubao/chats/38445348869032450/pclce_work/PCL2-CE/Plain Craft Launcher 2/obj/Release/net10.0-windows/win-x64/Controls/MyMsg/MyMsgInput.g.cs" />
+    <Compile Include="/home/user/Doubao/chats/38445348869032450/pclce_work/PCL2-CE/Plain Craft Launcher 2/obj/Release/net10.0-windows/win-x64/Controls/MyMsg/MyMsgMarkdown.g.cs" />
+    <Compile Include="/home/user/Doubao/chats/38445348869032450/pclce_work/PCL2-CE/Plain Craft Launcher 2/obj/Release/net10.0-windows/win-x64/Controls/MyMsg/MyMsgSelect.g.cs" />
+    <Compile Include="/home/user/Doubao/chats/38445348869032450/pclce_work/PCL2-CE/Plain Craft Launcher 2/obj/Release/net10.0-windows/win-x64/Controls/MyMsg/MyMsgText.g.cs" />
+    <Compile Include="/home/user/Doubao/chats/38445348869032450/pclce_work/PCL2-CE/Plain Craft Launcher 2/obj/Release/net10.0-windows/win-x64/Controls/MyRadioBox.g.cs" />
+    <Compile Include="/home/user/Doubao/chats/38445348869032450/pclce_work/PCL2-CE/Plain Craft Launcher 2/obj/Release/net10.0-windows/win-x64/Controls/MyRadioButton.g.cs" />
+    <Compile Include="/home/user/Doubao/chats/38445348869032450/pclce_work/PCL2-CE/Plain Craft Launcher 2/obj/Release/net10.0-windows/win-x64/Controls/MySearchBox.g.cs" />
+    <Compile Include="/home/user/Doubao/chats/38445348869032450/pclce_work/PCL2-CE/Plain Craft Launcher 2/obj/Release/net10.0-windows/win-x64/Controls/MySlider.g.cs" />
+    <Compile Include="/home/user/Doubao/chats/38445348869032450/pclce_work/PCL2-CE/Plain Craft Launcher 2/obj/Release/net10.0-windows/win-x64/Controls/MyToast.g.cs" />
+    <Compile Include="/home/user/Doubao/chats/38445348869032450/pclce_work/PCL2-CE/Plain Craft Launcher 2/obj/Release/net10.0-windows/win-x64/FormMain.g.cs" />
+    <Compile Include="/home/user/Doubao/chats/38445348869032450/pclce_work/PCL2-CE/Plain Craft Launcher 2/obj/Release/net10.0-windows/win-x64/Pages/PageDownload/Comp/MyCompItem.g.cs" />
+    <Compile Include="/home/user/Doubao/chats/38445348869032450/pclce_work/PCL2-CE/Plain Craft Launcher 2/obj/Release/net10.0-windows/win-x64/Pages/PageDownload/Comp/PageComp.g.cs" />
+    <Compile Include="/home/user/Doubao/chats/38445348869032450/pclce_work/PCL2-CE/Plain Craft Launcher 2/obj/Release/net10.0-windows/win-x64/Pages/PageDownload/Comp/PageDownloadCompDetail.g.cs" />
+    <Compile Include="/home/user/Doubao/chats/38445348869032450/pclce_work/PCL2-CE/Plain Craft Launcher 2/obj/Release/net10.0-windows/win-x64/Pages/PageDownload/Comp/PageDownloadDataPack.g.cs" />
+    <Compile Include="/home/user/Doubao/chats/38445348869032450/pclce_work/PCL2-CE/Plain Craft Launcher 2/obj/Release/net10.0-windows/win-x64/Pages/PageDownload/Comp/PageDownloadMod.g.cs" />
+    <Compile Include="/home/user/Doubao/chats/38445348869032450/pclce_work/PCL2-CE/Plain Craft Launcher 2/obj/Release/net10.0-windows/win-x64/Pages/PageDownload/Comp/PageDownloadPack.g.cs" />
+    <Compile Include="/home/user/Doubao/chats/38445348869032450/pclce_work/PCL2-CE/Plain Craft Launcher 2/obj/Release/net10.0-windows/win-x64/Pages/PageDownload/Comp/PageDownloadResourcePack.g.cs" />
+    <Compile Include="/home/user/Doubao/chats/38445348869032450/pclce_work/PCL2-CE/Plain Craft Launcher 2/obj/Release/net10.0-windows/win-x64/Pages/PageDownload/Comp/PageDownloadShader.g.cs" />
+    <Compile Include="/home/user/Doubao/chats/38445348869032450/pclce_work/PCL2-CE/Plain Craft Launcher 2/obj/Release/net10.0-windows/win-x64/Pages/PageDownload/Comp/PageDownloadWorld.g.cs" />
+    <Compile Include="/home/user/Doubao/chats/38445348869032450/pclce_work/PCL2-CE/Plain Craft Launcher 2/obj/Release/net10.0-windows/win-x64/Pages/PageDownload/PageDownloadCleanroom.g.cs" />
+    <Compile Include="/home/user/Doubao/chats/38445348869032450/pclce_work/PCL2-CE/Plain Craft Launcher 2/obj/Release/net10.0-windows/win-x64/Pages/PageDownload/PageDownloadClient.g.cs" />
+    <Compile Include="/home/user/Doubao/chats/38445348869032450/pclce_work/PCL2-CE/Plain Craft Launcher 2/obj/Release/net10.0-windows/win-x64/Pages/PageDownload/PageDownloadCompFavorites.g.cs" />
+    <Compile Include="/home/user/Doubao/chats/38445348869032450/pclce_work/PCL2-CE/Plain Craft Launcher 2/obj/Release/net10.0-windows/win-x64/Pages/PageDownload/PageDownloadFabric.g.cs" />
+    <Compile Include="/home/user/Doubao/chats/38445348869032450/pclce_work/PCL2-CE/Plain Craft Launcher 2/obj/Release/net10.0-windows/win-x64/Pages/PageDownload/PageDownloadForge.g.cs" />
+    <Compile Include="/home/user/Doubao/chats/38445348869032450/pclce_work/PCL2-CE/Plain Craft Launcher 2/obj/Release/net10.0-windows/win-x64/Pages/PageDownload/PageDownloadInstall.g.cs" />
+    <Compile Include="/home/user/Doubao/chats/38445348869032450/pclce_work/PCL2-CE/Plain Craft Launcher 2/obj/Release/net10.0-windows/win-x64/Pages/PageDownload/PageDownloadLabyMod.g.cs" />
+    <Compile Include="/home/user/Doubao/chats/38445348869032450/pclce_work/PCL2-CE/Plain Craft Launcher 2/obj/Release/net10.0-windows/win-x64/Pages/PageDownload/PageDownloadLeft.g.cs" />
+    <Compile Include="/home/user/Doubao/chats/38445348869032450/pclce_work/PCL2-CE/Plain Craft Launcher 2/obj/Release/net10.0-windows/win-x64/Pages/PageDownload/PageDownloadLegacyFabric.g.cs" />
+    <Compile Include="/home/user/Doubao/chats/38445348869032450/pclce_work/PCL2-CE/Plain Craft Launcher 2/obj/Release/net10.0-windows/win-x64/Pages/PageDownload/PageDownloadLiteLoader.g.cs" />
+    <Compile Include="/home/user/Doubao/chats/38445348869032450/pclce_work/PCL2-CE/Plain Craft Launcher 2/obj/Release/net10.0-windows/win-x64/Pages/PageDownload/PageDownloadNeoForge.g.cs" />
+    <Compile Include="/home/user/Doubao/chats/38445348869032450/pclce_work/PCL2-CE/Plain Craft Launcher 2/obj/Release/net10.0-windows/win-x64/Pages/PageDownload/PageDownloadOptiFine.g.cs" />
+    <Compile Include="/home/user/Doubao/chats/38445348869032450/pclce_work/PCL2-CE/Plain Craft Launcher 2/obj/Release/net10.0-windows/win-x64/Pages/PageHelpDetail.g.cs" />
+    <Compile Include="/home/user/Doubao/chats/38445348869032450/pclce_work/PCL2-CE/Plain Craft Launcher 2/obj/Release/net10.0-windows/win-x64/Pages/PageHomepage/PageHomepageNewsView.g.cs" />
+    <Compile Include="/home/user/Doubao/chats/38445348869032450/pclce_work/PCL2-CE/Plain Craft Launcher 2/obj/Release/net10.0-windows/win-x64/Pages/PageInstance/MyLocalModItem.g.cs" />
+    <Compile Include="/home/user/Doubao/chats/38445348869032450/pclce_work/PCL2-CE/Plain Craft Launcher 2/obj/Release/net10.0-windows/win-x64/Pages/PageInstance/PageInstanceCompResource.g.cs" />
+    <Compile Include="/home/user/Doubao/chats/38445348869032450/pclce_work/PCL2-CE/Plain Craft Launcher 2/obj/Release/net10.0-windows/win-x64/Pages/PageInstance/PageInstanceExport.g.cs" />
+    <Compile Include="/home/user/Doubao/chats/38445348869032450/pclce_work/PCL2-CE/Plain Craft Launcher 2/obj/Release/net10.0-windows/win-x64/Pages/PageInstance/PageInstanceInstall.g.cs" />
+    <Compile Include="/home/user/Doubao/chats/38445348869032450/pclce_work/PCL2-CE/Plain Craft Launcher 2/obj/Release/net10.0-windows/win-x64/Pages/PageInstance/PageInstanceLeft.g.cs" />
+    <Compile Include="/home/user/Doubao/chats/38445348869032450/pclce_work/PCL2-CE/Plain Craft Launcher 2/obj/Release/net10.0-windows/win-x64/Pages/PageInstance/PageInstanceModDisabled.g.cs" />
+    <Compile Include="/home/user/Doubao/chats/38445348869032450/pclce_work/PCL2-CE/Plain Craft Launcher 2/obj/Release/net10.0-windows/win-x64/Pages/PageInstance/PageInstanceOverall.g.cs" />
+    <Compile Include="/home/user/Doubao/chats/38445348869032450/pclce_work/PCL2-CE/Plain Craft Launcher 2/obj/Release/net10.0-windows/win-x64/Pages/PageInstance/PageInstanceSaves.g.cs" />
+    <Compile Include="/home/user/Doubao/chats/38445348869032450/pclce_work/PCL2-CE/Plain Craft Launcher 2/obj/Release/net10.0-windows/win-x64/Pages/PageInstance/PageInstanceSaves/PageInstanceSavesDatapack.g.cs" />
+    <Compile Include="/home/user/Doubao/chats/38445348869032450/pclce_work/PCL2-CE/Plain Craft Launcher 2/obj/Release/net10.0-windows/win-x64/Pages/PageInstance/PageInstanceSaves/PageInstanceSavesInfo.g.cs" />
+    <Compile Include="/home/user/Doubao/chats/38445348869032450/pclce_work/PCL2-CE/Plain Craft Launcher 2/obj/Release/net10.0-windows/win-x64/Pages/PageInstance/PageInstanceSaves/PageInstanceSavesLeft.g.cs" />
+    <Compile Include="/home/user/Doubao/chats/38445348869032450/pclce_work/PCL2-CE/Plain Craft Launcher 2/obj/Release/net10.0-windows/win-x64/Pages/PageInstance/PageInstanceScreenshot.g.cs" />
+    <Compile Include="/home/user/Doubao/chats/38445348869032450/pclce_work/PCL2-CE/Plain Craft Launcher 2/obj/Release/net10.0-windows/win-x64/Pages/PageInstance/PageInstanceServer.g.cs" />
+    <Compile Include="/home/user/Doubao/chats/38445348869032450/pclce_work/PCL2-CE/Plain Craft Launcher 2/obj/Release/net10.0-windows/win-x64/Pages/PageInstance/PageInstanceSetup.g.cs" />
+    <Compile Include="/home/user/Doubao/chats/38445348869032450/pclce_work/PCL2-CE/Plain Craft Launcher 2/obj/Release/net10.0-windows/win-x64/Pages/PageInstance/ServerCard.g.cs" />
+    <Compile Include="/home/user/Doubao/chats/38445348869032450/pclce_work/PCL2-CE/Plain Craft Launcher 2/obj/Release/net10.0-windows/win-x64/Pages/PageLaunch/MyMsgLogin.g.cs" />
+    <Compile Include="/home/user/Doubao/chats/38445348869032450/pclce_work/PCL2-CE/Plain Craft Launcher 2/obj/Release/net10.0-windows/win-x64/Pages/PageLaunch/MySkin.g.cs" />
+    <Compile Include="/home/user/Doubao/chats/38445348869032450/pclce_work/PCL2-CE/Plain Craft Launcher 2/obj/Release/net10.0-windows/win-x64/Pages/PageLaunch/PageLaunchLeft.g.cs" />
+    <Compile Include="/home/user/Doubao/chats/38445348869032450/pclce_work/PCL2-CE/Plain Craft Launcher 2/obj/Release/net10.0-windows/win-x64/Pages/PageLaunch/PageLaunchRight.g.cs" />
+    <Compile Include="/home/user/Doubao/chats/38445348869032450/pclce_work/PCL2-CE/Plain Craft Launcher 2/obj/Release/net10.0-windows/win-x64/Pages/PageLaunch/PageLoginAuth.g.cs" />
+    <Compile Include="/home/user/Doubao/chats/38445348869032450/pclce_work/PCL2-CE/Plain Craft Launcher 2/obj/Release/net10.0-windows/win-x64/Pages/PageLaunch/PageLoginMs.g.cs" />
+    <Compile Include="/home/user/Doubao/chats/38445348869032450/pclce_work/PCL2-CE/Plain Craft Launcher 2/obj/Release/net10.0-windows/win-x64/Pages/PageLaunch/PageLoginOffline.g.cs" />
+    <Compile Include="/home/user/Doubao/chats/38445348869032450/pclce_work/PCL2-CE/Plain Craft Launcher 2/obj/Release/net10.0-windows/win-x64/Pages/PageLaunch/PageLoginProfile.g.cs" />
+    <Compile Include="/home/user/Doubao/chats/38445348869032450/pclce_work/PCL2-CE/Plain Craft Launcher 2/obj/Release/net10.0-windows/win-x64/Pages/PageLaunch/PageLoginProfileSkin.g.cs" />
+    <Compile Include="/home/user/Doubao/chats/38445348869032450/pclce_work/PCL2-CE/Plain Craft Launcher 2/obj/Release/net10.0-windows/win-x64/Pages/PageLogLeft.g.cs" />
+    <Compile Include="/home/user/Doubao/chats/38445348869032450/pclce_work/PCL2-CE/Plain Craft Launcher 2/obj/Release/net10.0-windows/win-x64/Pages/PageLogRight.g.cs" />
+    <Compile Include="/home/user/Doubao/chats/38445348869032450/pclce_work/PCL2-CE/Plain Craft Launcher 2/obj/Release/net10.0-windows/win-x64/Pages/PageSelectLeft.g.cs" />
+    <Compile Include="/home/user/Doubao/chats/38445348869032450/pclce_work/PCL2-CE/Plain Craft Launcher 2/obj/Release/net10.0-windows/win-x64/Pages/PageSelectRight.g.cs" />
+    <Compile Include="/home/user/Doubao/chats/38445348869032450/pclce_work/PCL2-CE/Plain Craft Launcher 2/obj/Release/net10.0-windows/win-x64/Pages/PageSetup/PageAboutLeft.g.cs" />
+    <Compile Include="/home/user/Doubao/chats/38445348869032450/pclce_work/PCL2-CE/Plain Craft Launcher 2/obj/Release/net10.0-windows/win-x64/Pages/PageSetup/PageSetupAbout.g.cs" />
+    <Compile Include="/home/user/Doubao/chats/38445348869032450/pclce_work/PCL2-CE/Plain Craft Launcher 2/obj/Release/net10.0-windows/win-x64/Pages/PageSetup/PageSetupFeedback.g.cs" />
+    <Compile Include="/home/user/Doubao/chats/38445348869032450/pclce_work/PCL2-CE/Plain Craft Launcher 2/obj/Release/net10.0-windows/win-x64/Pages/PageSetup/PageSetupGameLink.g.cs" />
+    <Compile Include="/home/user/Doubao/chats/38445348869032450/pclce_work/PCL2-CE/Plain Craft Launcher 2/obj/Release/net10.0-windows/win-x64/Pages/PageSetup/PageSetupGameManage.g.cs" />
+    <Compile Include="/home/user/Doubao/chats/38445348869032450/pclce_work/PCL2-CE/Plain Craft Launcher 2/obj/Release/net10.0-windows/win-x64/Pages/PageSetup/PageSetupJava.g.cs" />
+    <Compile Include="/home/user/Doubao/chats/38445348869032450/pclce_work/PCL2-CE/Plain Craft Launcher 2/obj/Release/net10.0-windows/win-x64/Pages/PageSetup/PageSetupLaunch.g.cs" />
+    <Compile Include="/home/user/Doubao/chats/38445348869032450/pclce_work/PCL2-CE/Plain Craft Launcher 2/obj/Release/net10.0-windows/win-x64/Pages/PageSetup/PageSetupLauncherLanguage.g.cs" />
+    <Compile Include="/home/user/Doubao/chats/38445348869032450/pclce_work/PCL2-CE/Plain Craft Launcher 2/obj/Release/net10.0-windows/win-x64/Pages/PageSetup/PageSetupLauncherMisc.g.cs" />
+    <Compile Include="/home/user/Doubao/chats/38445348869032450/pclce_work/PCL2-CE/Plain Craft Launcher 2/obj/Release/net10.0-windows/win-x64/Pages/PageSetup/PageSetupLeft.g.cs" />
+    <Compile Include="/home/user/Doubao/chats/38445348869032450/pclce_work/PCL2-CE/Plain Craft Launcher 2/obj/Release/net10.0-windows/win-x64/Pages/PageSetup/PageSetupLog.g.cs" />
+    <Compile Include="/home/user/Doubao/chats/38445348869032450/pclce_work/PCL2-CE/Plain Craft Launcher 2/obj/Release/net10.0-windows/win-x64/Pages/PageSetup/PageSetupService.g.cs" />
+    <Compile Include="/home/user/Doubao/chats/38445348869032450/pclce_work/PCL2-CE/Plain Craft Launcher 2/obj/Release/net10.0-windows/win-x64/Pages/PageSetup/PageSetupUI.g.cs" />
+    <Compile Include="/home/user/Doubao/chats/38445348869032450/pclce_work/PCL2-CE/Plain Craft Launcher 2/obj/Release/net10.0-windows/win-x64/Pages/PageSetup/PageSetupUpdate.g.cs" />
+    <Compile Include="/home/user/Doubao/chats/38445348869032450/pclce_work/PCL2-CE/Plain Craft Launcher 2/obj/Release/net10.0-windows/win-x64/Pages/PageSpeedLeft.g.cs" />
+    <Compile Include="/home/user/Doubao/chats/38445348869032450/pclce_work/PCL2-CE/Plain Craft Launcher 2/obj/Release/net10.0-windows/win-x64/Pages/PageSpeedRight.g.cs" />
+    <Compile Include="/home/user/Doubao/chats/38445348869032450/pclce_work/PCL2-CE/Plain Craft Launcher 2/obj/Release/net10.0-windows/win-x64/Pages/PageTools/PageToolsGameLink.g.cs" />
+    <Compile Include="/home/user/Doubao/chats/38445348869032450/pclce_work/PCL2-CE/Plain Craft Launcher 2/obj/Release/net10.0-windows/win-x64/Pages/PageTools/PageToolsLeft.g.cs" />
+    <Compile Include="/home/user/Doubao/chats/38445348869032450/pclce_work/PCL2-CE/Plain Craft Launcher 2/obj/Release/net10.0-windows/win-x64/Pages/PageTools/PageToolsTest.g.cs" />
+    <Compile Include="/home/user/Doubao/chats/38445348869032450/pclce_work/PCL2-CE/Plain Craft Launcher 2/obj/Release/net10.0-windows/win-x64/Application.g.cs" />
+    <Compile Include="/home/user/Doubao/chats/38445348869032450/pclce_work/PCL2-CE/Plain Craft Launcher 2/obj/Release/net10.0-windows/win-x64/Plain Craft Launcher 2_Content.g.cs" />
+    <Compile Include="/home/user/Doubao/chats/38445348869032450/pclce_work/PCL2-CE/Plain Craft Launcher 2/obj/Release/net10.0-windows/win-x64/GeneratedInternalTypeHelper.g.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Analyzer Include="/home/user/.dotnet/sdk/10.0.401/Sdks/Microsoft.NET.Sdk/targets/../analyzers/Microsoft.CodeAnalysis.CSharp.NetAnalyzers.dll" />
+    <Analyzer Include="/home/user/.dotnet/sdk/10.0.401/Sdks/Microsoft.NET.Sdk/targets/../analyzers/Microsoft.CodeAnalysis.NetAnalyzers.dll" />
+    <Analyzer Include="/home/user/.nuget/packages/communitytoolkit.mvvm/8.4.2/analyzers/dotnet/roslyn5.0/cs/CommunityToolkit.Mvvm.CodeFixers.dll" />
+    <Analyzer Include="/home/user/.nuget/packages/communitytoolkit.mvvm/8.4.2/analyzers/dotnet/roslyn5.0/cs/CommunityToolkit.Mvvm.SourceGenerators.dll" />
+    <Analyzer Include="/home/user/.nuget/packages/humanizer.core/3.0.10/analyzers/dotnet/roslyn4.14/cs/Humanizer.Analyzers.dll" />
+    <Analyzer Include="/home/user/.nuget/packages/microsoft.extensions.logging.abstractions/10.0.9/analyzers/dotnet/roslyn4.4/cs/Microsoft.Extensions.Logging.Generators.dll" />
+    <Analyzer Include="/home/user/.nuget/packages/microsoft.extensions.options/10.0.9/analyzers/dotnet/roslyn4.4/cs/Microsoft.Extensions.Options.SourceGeneration.dll" />
+    <Analyzer Include="/home/user/.nuget/packages/microsoft.net.illink.tasks/10.0.12/analyzers/dotnet/cs/ILLink.CodeFixProvider.dll" />
+    <Analyzer Include="/home/user/.nuget/packages/microsoft.net.illink.tasks/10.0.12/analyzers/dotnet/cs/ILLink.RoslynAnalyzer.dll" />
+    <Analyzer Include="/home/user/.nuget/packages/sentry/6.6.0/analyzers/dotnet/roslyn4.3/cs/Sentry.Compiler.Extensions.dll" />
+    <Analyzer Include="/home/user/.dotnet/packs/Microsoft.NETCore.App.Ref/10.0.12/analyzers/dotnet/cs/Microsoft.Interop.ComInterfaceGenerator.dll" />
+    <Analyzer Include="/home/user/.dotnet/packs/Microsoft.NETCore.App.Ref/10.0.12/analyzers/dotnet/cs/Microsoft.Interop.JavaScript.JSImportGenerator.dll" />
+    <Analyzer Include="/home/user/.dotnet/packs/Microsoft.NETCore.App.Ref/10.0.12/analyzers/dotnet/cs/Microsoft.Interop.LibraryImportGenerator.dll" />
+    <Analyzer Include="/home/user/.dotnet/packs/Microsoft.NETCore.App.Ref/10.0.12/analyzers/dotnet/cs/Microsoft.Interop.SourceGeneration.dll" />
+    <Analyzer Include="/home/user/.dotnet/packs/Microsoft.NETCore.App.Ref/10.0.12/analyzers/dotnet/cs/System.Text.Json.SourceGeneration.dll" />
+    <Analyzer Include="/home/user/.dotnet/packs/Microsoft.NETCore.App.Ref/10.0.12/analyzers/dotnet/cs/System.Text.RegularExpressions.Generator.dll" />
+    <Analyzer Include="/home/user/.nuget/packages/microsoft.windowsdesktop.app.ref/10.0.12/analyzers/dotnet/System.Windows.Forms.Analyzers.dll" />
+    <Analyzer Include="/home/user/.nuget/packages/microsoft.windowsdesktop.app.ref/10.0.12/analyzers/dotnet/cs/System.Windows.Forms.Analyzers.CSharp.dll" />
+    <Analyzer Include="/home/user/.nuget/packages/microsoft.windowsdesktop.app.ref/10.0.12/analyzers/dotnet/cs/System.Windows.Forms.Analyzers.CodeFixes.CSharp.dll" />
+  </ItemGroup>
+  <Import Project="Sdk.targets" Sdk="Microsoft.NET.Sdk" />
+</Project>
