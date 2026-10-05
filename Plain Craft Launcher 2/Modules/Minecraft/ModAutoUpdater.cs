@@ -25,7 +25,7 @@ public static class ModAutoUpdater
     public const string ManifestPath = "/api/mods"; // 模组清单接口（含多源下载直链）
 
     /// <summary>模组更新功能总开关（由远程配置控制）。</summary>
-    public static bool IsEnabled { get; set; } = false;
+    public static bool IsEnabled { get; set; } = true;
 
     public const int Concurrency = 5; // 并发下载数
     public const int MaxRetries = 3; // 单源重试次数
@@ -269,6 +269,6 @@ public static class ModAutoUpdater
     /// <summary>无 sources 时的默认下载地址（GitHub raw，与清单数据仓库一致）。</summary>
     private static string GetDefaultSource(string name)
     {
-        return "https://raw.githubusercontent.com/maoxinhe/mzy-api/main/mods/" + Uri.EscapeDataString(name);
+        return "https://cdn.jsdelivr.net/gh/maoxinhe/mzy-api@main/mods/" + Uri.EscapeDataString(name);
     }
 }
