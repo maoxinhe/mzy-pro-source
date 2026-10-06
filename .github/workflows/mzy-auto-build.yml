@@ -12,11 +12,11 @@ on:
   workflow_dispatch:
     inputs:
       version_override:
-        description: "版本号覆盖（如 2.15.42），留空自动递增"
+        description: "版本号覆盖（如 2.15.42），留空自动取 metadata.json"
         required: false
 
 jobs:
-  build:
+  build-sign-release:
     runs-on: windows-latest
     steps:
       - uses: actions/checkout@v4
@@ -30,38 +30,77 @@ jobs:
         run: |
           dotnet publish "Plain Craft Launcher 2/Plain Craft Launcher 2.csproj" -c Release -r win-x64 --self-contained true -p:PublishSingleFile=true -p:IncludeAllContentForSelfExtract=true -o "publish"
 
-      - name: Rename
-        id: rename
+      - name: 读取版本号
+        id: ver
         shell: bash
         run: |
           DATE=$(date +%y%m%d)
-          # 从 metadata.json 读版本号
-          VER=$(cat "Plain Craft Launcher 2/metadata.json" | grep -o '"Version"[^,]*' | grep -o '[0-9.]*')
+          VER=$(cat "Plain Craft Launcher 2/metadata.json" | grep -o '"Version"[^,]*' | grep -o '[0-9][0-9.]*')
           if [ -n "${{ github.event.inputs.version_override }}" ]; then
             VER="${{ github.event.inputs.version_override }}"
           fi
-          # 小版本号从 git commit count 取
-          BUMP=$(git rev-list --count HEAD)
+          BUMP=${{ github.run_number }}
           FILENAME="MZY-Pro_${DATE}_x64_${BUMP}.exe"
-          mv "publish/Plain Craft Launcher 2.exe" "publish/$FILENAME"
-          echo "filename=$FILENAME" >> $GITHUB_OUTPUT
+          echo "date=$DATE" >> $GITHUB_OUTPUT
           echo "version=$VER" >> $GITHUB_OUTPUT
+          echo "bump=$BUMP" >> $GITHUB_OUTPUT
+          echo "filename=$FILENAME" >> $GITHUB_OUTPUT
           echo "tag=v${VER}-mzy.${BUMP}" >> $GITHUB_OUTPUT
-          echo "=== 产物: $FILENAME ==="
-          ls -lh "publish/$FILENAME"
 
-      - name: Create Release
+      - name: 签名（自签证书）
+        shell: pwsh
+        env:
+          MZY_PFX_BASE64: ${{ secrets.MZY_PFX_BASE64 }}
+          MZY_PFX_PASSWORD: ${{ secrets.MZY_PFX_PASSWORD }}
+        run: |
+          $pfxBytes = [Convert]::FromBase64String($env:MZY_PFX_BASE64)
+          [IO.File]::WriteAllBytes("cert.pfx", $pfxBytes)
+          $cert = New-Object System.Security.Cryptography.X509Certificates.X509Certificate2("cert.pfx", $env:MZY_PFX_PASSWORD)
+          $exe = Get-ChildItem "publish\Plain Craft Launcher 2.exe"
+          $sig = Set-AuthenticodeSignature -FilePath $exe.FullName -Certificate $cert -TimestampServer "http://timestamp.digicert.com"
+          Write-Host "签名状态: $($sig.Status)"
+
+      - name: 按规范改名
+        shell: bash
+        run: mv "publish/Plain Craft Launcher 2.exe" "publish/${{ steps.ver.outputs.filename }}"
+
+      - name: 发布 Release
         uses: softprops/action-gh-release@v2
         with:
-          tag_name: ${{ steps.rename.outputs.tag }}
-          name: 梦之韵Pro ${{ steps.rename.outputs.version }} (mzy.${{ github.run_number }})
+          tag_name: ${{ steps.ver.outputs.tag }}
+          name: 梦之韵Pro ${{ steps.ver.outputs.version }} (mzy.${{ steps.ver.outputs.bump }})
           body: |
             ## 自动构建
 
-            - 版本：${{ steps.rename.outputs.version }}
-            文件：${{ steps.rename.outputs.filename }}
+            - 版本：${{ steps.ver.outputs.version }}
+            - 文件：${{ steps.ver.outputs.filename }}
             - 提交：${{ github.sha }}
-            - 时间：${{ github.event.head_commit.timestamp }}
-          files: publish/${{ steps.rename.outputs.filename }}
+            - 签名：自签证书（苏州梦之韵科技）
+          files: publish/${{ steps.ver.outputs.filename }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: 同步版本号到 Cloudflare KV
+        shell: bash
+        env:
+          CF_API_TOKEN: ${{ secrets.CF_API_TOKEN }}
+          CF_ACCOUNT_ID: ${{ secrets.CF_ACCOUNT_ID }}
+          CF_KV_NAMESPACE_ID: ${{ secrets.CF_KV_NAMESPACE_ID }}
+        run: |
+          DL_URL="https://github.com/maoxinhe/mzy-pro-source/releases/download/${{ steps.ver.outputs.tag }}/${{ steps.ver.outputs.filename }}"
+          PAYLOAD=$(cat <<EOF
+          {
+            "version": "${{ steps.ver.outputs.version }}",
+            "file": "${{ steps.ver.outputs.filename }}",
+            "url": "$DL_URL",
+            "changelog": "自动构建 $(date +%Y-%m-%d)",
+            "date": "$(date +%Y-%m-%d)",
+            "tag": "${{ steps.ver.outputs.tag }}"
+          }
+          EOF
+          )
+          curl -s -X PUT "https://api.cloudflare.com/client/v4/accounts/$CF_ACCOUNT_ID/storage/kv/namespaces/$CF_KV_NAMESPACE_ID/values/latest_version" \
+            -H "Authorization: Bearer $CF_API_TOKEN" \
+            -H "Content-Type: application/json" \
+            -d "$PAYLOAD"
+          echo "KV 已写入最新版本"
