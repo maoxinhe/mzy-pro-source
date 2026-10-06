@@ -34,10 +34,8 @@ public partial class PageLaunchRight : IRefreshable
         PanBack.ScrollToHome();
         PanScroll = PanBack; // 不知道为啥不能在 XAML 设置
         PanLog.Visibility = ModBase.modeDebug ? Visibility.Visible : Visibility.Collapsed;
-        // 社区版提示
-        PanHint.Visibility = States.Hint.CEMessage
-            ? Visibility.Visible
-            : Visibility.Collapsed;
+        // 梦之韵Pro：正式发行版，不显示"建议下载原版PCL"社区提示横幅（用户反馈遮挡启动区）
+        PanHint.Visibility = Visibility.Collapsed;
         LabHint1.Text = Lang.Text("Launch.Right.CommunityHint.Message");
         LabHint2.Text = Lang.Text("Launch.Right.CommunityHint.HidePrompt");
         _EnsureHomepageLiveWatcher();

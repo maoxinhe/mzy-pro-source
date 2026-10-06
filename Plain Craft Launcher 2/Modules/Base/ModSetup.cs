@@ -637,9 +637,10 @@ public class ModSetup
 
     public static void UiLogoLeft(bool value)
     {
+        // 梦之韵Pro：第0列已改为 Auto 自适应（防标题被裁成"梦之韵Pr"）；
+        // 仅当用户选择"隐藏标题且左对齐"时收为 0，其余情况保持 Auto（NaN）
         ModMain.frmMain.PanTitleMain.ColumnDefinitions[0].Width = new GridLength(
-            value && Config.Preference.WindowTitleType == LauncherTitleType.None ? 0 : 1,
-            GridUnitType.Star);
+            value && Config.Preference.WindowTitleType == LauncherTitleType.None ? 0 : double.NaN);
     }
 
     #endregion

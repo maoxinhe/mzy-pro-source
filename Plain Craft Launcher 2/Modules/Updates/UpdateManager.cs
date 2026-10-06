@@ -77,10 +77,11 @@ public static class UpdateManager
                     SystemInfo.IsArm64System ? UpdateArch.arm64 : UpdateArch.x64
                 );
 
-                ModBase.WriteFile($"{ModBase.pathTemp}CEUpdateLog.md", version.Changelog);
+                // 梦之韵Pro：修复"最新版还提示更新"——仅在确认有新版本时才写更新日志，避免误弹"已更新至"
                 ModBase.Log($"[Update] 远程最新版本: {version.VersionName}, 当前版本: {ModBase.versionBaseName}");
                 if (!(SemVer.Parse(version.VersionName) > SemVer.Parse(ModBase.versionBaseName)))
                     return;
+                ModBase.WriteFile($"{ModBase.pathTemp}CEUpdateLog.md", version.Changelog);
                 if (type == UpdateEnums.UpdateType.PromptOnly)
                 {
                     ModBase.RunInUi(() =>

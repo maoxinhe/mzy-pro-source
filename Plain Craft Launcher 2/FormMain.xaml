@@ -134,7 +134,8 @@
                                         SvgIcon="lucide/circle-help" />
                     <Grid x:Name="PanTitleMain" HorizontalAlignment="Left" Width="{Binding ActualWidth, ElementName=PanTitle, Mode=OneWay}">
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="1*" />
+                            <!-- 梦之韵Pro：标题 Logo 列改为 Auto 自适应，防止导航按钮挤占后把"梦之韵Pro"裁成"梦之韵Pr" -->
+                            <ColumnDefinition Width="Auto" />
                             <ColumnDefinition Width="Auto" />
                             <ColumnDefinition Width="1*" />
                         </Grid.ColumnDefinitions>

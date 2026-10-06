@@ -45,6 +45,8 @@ public partial class FormMain
                 changelog = ModBase.ReadFile(changelogFile);
             else
                 changelog = Lang.Text("Main.UpdateLog.Empty");
+            // 梦之韵Pro：显示后立即删除，避免残留文件导致每次启动都弹"已更新至"
+            try { if (File.Exists(changelogFile)) File.Delete(changelogFile); } catch { }
             if (ModMain.MyMsgBoxMarkdown(changelog,
                     Lang.Text("Main.UpdateLog.Title", ModBase.versionBranchName, ModBase.versionBaseName), Lang.Text("Common.Action.Confirm"), Lang.Text("Main.UpdateLog.FullChangelog")) ==
                 2) ModBase.OpenWebsite("https://forum.camzy.uno");
@@ -656,10 +658,8 @@ public partial class FormMain
     // 标题栏改变大小
     private void PanTitle_SizeChanged(object sender, EventArgs e)
     {
-        if (PanTitleMain.ColumnDefinitions[0].ActualWidth - 30 <= 0)
-            PanTitleLeft.ColumnDefinitions[0].MaxWidth = 0;
-        else
-            PanTitleLeft.ColumnDefinitions[0].MaxWidth = PanTitleMain.ColumnDefinitions[0].ActualWidth - 30;
+        // 梦之韵Pro：标题 Logo 列已改为 Auto 自适应，无需动态压缩，保证"梦之韵Pro"完整显示
+        PanTitleLeft.ColumnDefinitions[0].MaxWidth = double.PositiveInfinity;
     }
 
     // 最小化
