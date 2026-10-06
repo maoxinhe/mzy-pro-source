@@ -35,6 +35,43 @@ public partial class PageHomepageNewsView : MyPageRight
         BtnOpenAi.Click += (_, _) => new AiToolsWindow().ShowDialog();
         BtnOpenModCheck.Click += (_, _) => OpenTool("modcheck");
         BtnOpenMemAdvice.Click += (_, _) => OpenTool("memadvice");
+        BtnCheckin.Click += async (_, _) => await DoCheckin();
+    }
+
+    // ================= 每日签到 =================
+    private async System.Threading.Tasks.Task DoCheckin()
+    {
+        try
+        {
+            var name = ProfileService.Current?.UserName ?? "";
+            if (string.IsNullOrWhiteSpace(name))
+            {
+                ModMain.MyMsgBox("请先登录正版账号再签到。", "梦之韵Pro");
+                return;
+            }
+            var res = await _hc.PostAsJsonAsync(ApiBase + "/api/checkin", new { name });
+            var obj = await res.Content.ReadFromJsonAsync<CheckinResult>();
+            if (obj?.Ok == true)
+            {
+                ModMain.MyMsgBox($"签到成功！连续签到 {obj.Streak} 天。奖励已发放到游戏内，记得进服领取哦~", "梦之韵Pro");
+            }
+            else
+            {
+                ModMain.MyMsgBox(obj?.Error ?? "今天已经签到过啦", "梦之韵Pro");
+            }
+        }
+        catch (Exception ex)
+        {
+            ModBase.Log(ex, "[梦之韵Pro] 签到失败");
+            ModMain.MyMsgBox("网络异常，签到失败。", "梦之韵Pro");
+        }
+    }
+
+    public class CheckinResult
+    {
+        [System.Text.Json.Serialization.JsonPropertyName("ok")] public bool Ok { get; set; }
+        [System.Text.Json.Serialization.JsonPropertyName("streak")] public int Streak { get; set; }
+        [System.Text.Json.Serialization.JsonPropertyName("error")] public string? Error { get; set; }
     }
 
     // ================= 服务器状态 + 玩家数据 =================

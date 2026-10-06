@@ -176,6 +176,7 @@
                             <local:MyTextButton x:Name="BtnOpenAi" Margin="0,0,14,8" Text="AI 助手" />
                             <local:MyTextButton x:Name="BtnOpenModCheck" Margin="0,0,14,8" Text="模组冲突检测" />
                             <local:MyTextButton x:Name="BtnOpenMemAdvice" Margin="0,0,14,8" Text="内存优化建议" />
+                            <local:MyTextButton x:Name="BtnCheckin" Margin="0,0,14,8" Text="每日签到" />
                         </WrapPanel>
                     </Grid>
                 </local:MyCard>
