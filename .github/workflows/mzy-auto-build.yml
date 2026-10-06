@@ -1,0 +1,67 @@
+name: MZY Auto Build & Release
+
+permissions:
+  contents: write
+
+on:
+  push:
+    branches: [main]
+    paths-ignore:
+      - '**.md'
+      - '.github/workflows/mirror*'
+  workflow_dispatch:
+    inputs:
+      version_override:
+        description: "版本号覆盖（如 2.15.42），留空自动递增"
+        required: false
+
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup .NET 10
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
+
+      - name: Build
+        run: |
+          dotnet publish "Plain Craft Launcher 2/Plain Craft Launcher 2.csproj" -c Release -r win-x64 --self-contained true -p:PublishSingleFile=true -p:IncludeAllContentForSelfExtract=true -o "publish"
+
+      - name: Rename
+        id: rename
+        shell: bash
+        run: |
+          DATE=$(date +%y%m%d)
+          # 从 metadata.json 读版本号
+          VER=$(cat "Plain Craft Launcher 2/metadata.json" | grep -o '"Version"[^,]*' | grep -o '[0-9.]*')
+          if [ -n "${{ github.event.inputs.version_override }}" ]; then
+            VER="${{ github.event.inputs.version_override }}"
+          fi
+          # 小版本号从 git commit count 取
+          BUMP=$(git rev-list --count HEAD)
+          FILENAME="MZY-Pro_${DATE}_x64_${BUMP}.exe"
+          mv "publish/Plain Craft Launcher 2.exe" "publish/$FILENAME"
+          echo "filename=$FILENAME" >> $GITHUB_OUTPUT
+          echo "version=$VER" >> $GITHUB_OUTPUT
+          echo "tag=v${VER}-mzy.${BUMP}" >> $GITHUB_OUTPUT
+          echo "=== 产物: $FILENAME ==="
+          ls -lh "publish/$FILENAME"
+
+      - name: Create Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ steps.rename.outputs.tag }}
+          name: 梦之韵Pro ${{ steps.rename.outputs.version }} (mzy.${{ github.run_number }})
+          body: |
+            ## 自动构建
+
+            - 版本：${{ steps.rename.outputs.version }}
+            文件：${{ steps.rename.outputs.filename }}
+            - 提交：${{ github.sha }}
+            - 时间：${{ github.event.head_commit.timestamp }}
+          files: publish/${{ steps.rename.outputs.filename }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
