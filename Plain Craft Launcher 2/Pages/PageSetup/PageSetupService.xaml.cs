@@ -45,6 +45,12 @@ public partial class PageSetupService
         LoadRemoteConfigAsync();
         LoadNoticeAsync();
         LoadSrvStatusAsync();
+        LoadAnnounceAsync();
+        LoadOnlinePlayersAsync();
+        LoadCommandsAsync();
+        LoadWelcomeAsync();
+        LoadFaqAsync();
+        MzyApi.BumpCounter("launcher.service-page");
     }
 
     private async void LoadSrvStatusAsync()
@@ -585,5 +591,71 @@ public partial class PageSetupService
         [JsonPropertyName("sources")] public List<string>? Sources { get; set; }
 
         [JsonPropertyName("description")] public string? Description { get; set; }
+    }
+
+    // ===== 云端新 API 加载 =====
+
+    private async void LoadAnnounceAsync()
+    {
+        try
+        {
+            var a = await MzyApi.GetActiveAnnounceAsync();
+            if (a != null)
+            {
+                TextAnnounceTitle.Text = a.Title;
+                TextAnnounceContent.Text = a.Content;
+            }
+            else
+            {
+                TextAnnounceTitle.Text = "暂无公告";
+                TextAnnounceContent.Text = "";
+            }
+        }
+        catch { }
+    }
+
+    private async void LoadOnlinePlayersAsync()
+    {
+        try
+        {
+            var (online, max, players) = await MzyApi.GetOnlinePlayersAsync();
+            TextOnlineSummary.Text = $"当前在线：{online} / {max}";
+            ListOnlinePlayers.ItemsSource = players.Count > 0 ? players : new[] { "（暂无数据）" };
+        }
+        catch { }
+    }
+
+    private async void LoadCommandsAsync()
+    {
+        try
+        {
+            var cmds = await MzyApi.GetCommandsAsync();
+            ListCommands.ItemsSource = cmds.Select(c => new { cmd = c.cmd, desc = c.desc }).ToList();
+        }
+        catch { }
+    }
+
+    private async void LoadWelcomeAsync()
+    {
+        try
+        {
+            var w = await MzyApi.GetWelcomeAsync();
+            if (w != null)
+            {
+                TextWelcomeMsg.Text = w.Message;
+                ListQuickStart.ItemsSource = w.QuickStart;
+            }
+        }
+        catch { }
+    }
+
+    private async void LoadFaqAsync()
+    {
+        try
+        {
+            var faqs = await MzyApi.GetFaqAsync();
+            ListFaq.ItemsSource = faqs;
+        }
+        catch { }
     }
 }
