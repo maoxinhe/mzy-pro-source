@@ -1,10 +1,10 @@
 {
   "name": "梦之韵Pro",
   "version": {
-    "base": "2.15.37",
+    "base": "2.15.38",
     "upstream": "2.12.1",
-    "suffix": "mzy.37",
-    "code": 554
+    "suffix": "mzy.38",
+    "code": 556
   },
   "licenses": [
     {
