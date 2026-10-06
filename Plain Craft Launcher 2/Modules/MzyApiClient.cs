@@ -217,8 +217,13 @@ public static class MzyApi
     {
         try
         {
-            await Requester.FetchJsonAsync<JsonObject>(Base + "/error/report",
-                new RequestParam { Method = "POST", Body = $"{{\"error\":\"{error}\",\"version\":\"{version}\"}}" });
+            var body = $"{{\"error\":\"{error}\",\"version\":\"{version}\"}}";
+            await Requester.FetchAsync(Base + "/error/report", new FetchParam
+            {
+                Method = "POST",
+                Content = body,
+                ContentType = "application/json"
+            });
         }
         catch { }
     }
