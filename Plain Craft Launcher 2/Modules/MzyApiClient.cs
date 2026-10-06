@@ -165,7 +165,7 @@ public static class MzyApi
     }
 
     // ---- 新玩家欢迎 ----
-    public class Welcome { public string Title = "", Message = ""; public List<string> QuickStart = new(); }
+    public class Welcome { public string Title = "", Message = ""; public List<string> QuickStart = new(); public List<string> Tips = new(); }
     public static async Task<Welcome?> GetWelcomeAsync()
     {
         try
@@ -175,21 +175,31 @@ public static class MzyApi
             var w = new Welcome { Title = j["title"]?.ToString() ?? "", Message = j["message"]?.ToString() ?? "" };
             var arr = j?["quick_start"] as JsonArray;
             if (arr != null) foreach (var s in arr) w.QuickStart.Add(s.ToString());
+            var tips = j?["tips"] as JsonArray;
+            if (tips != null) foreach (var t in tips) w.Tips.Add(t.ToString());
             return w;
         }
         catch { return null; }
     }
 
-    // ---- 常用命令 ----
-    public static async Task<List<(string cmd, string desc)>> GetCommandsAsync()
+    // ---- 常用命令（按分类）----
+    public class CommandItem { public string Cmd = "", Desc = ""; }
+    public class CommandCategory { public string Name = ""; public List<CommandItem> Commands = new(); }
+    public static async Task<List<CommandCategory>> GetCommandsAsync()
     {
-        var list = new List<(string, string)>();
+        var list = new List<CommandCategory>();
         try
         {
             var j = await Requester.FetchJsonAsync<JsonObject>(Base + "/api/server/commands", RequestParam.WithRetry);
-            var arr = j?["commands"] as JsonArray;
+            var arr = j?["categories"] as JsonArray;
             if (arr == null) return list;
-            foreach (var c in arr) list.Add((c["cmd"]?.ToString() ?? "", c["desc"]?.ToString() ?? ""));
+            foreach (var cat in arr)
+            {
+                var c = new CommandCategory { Name = cat["name"]?.ToString() ?? "" };
+                var cmds = cat["commands"] as JsonArray;
+                if (cmds != null) foreach (var x in cmds) c.Commands.Add(new CommandItem { Cmd = x["cmd"]?.ToString() ?? "", Desc = x["desc"]?.ToString() ?? "" });
+                list.Add(c);
+            }
         }
         catch { }
         return list;

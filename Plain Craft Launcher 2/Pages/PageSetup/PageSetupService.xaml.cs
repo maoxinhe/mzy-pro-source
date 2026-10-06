@@ -629,8 +629,8 @@ public partial class PageSetupService
     {
         try
         {
-            var cmds = await MzyApi.GetCommandsAsync();
-            ListCommands.ItemsSource = cmds.Select(c => new { cmd = c.cmd, desc = c.desc }).ToList();
+            var cats = await MzyApi.GetCommandsAsync();
+            ListCommands.ItemsSource = cats;
         }
         catch { }
     }
@@ -644,6 +644,7 @@ public partial class PageSetupService
             {
                 TextWelcomeMsg.Text = w.Message;
                 ListQuickStart.ItemsSource = w.QuickStart;
+                ListWelcomeTips.ItemsSource = w.Tips;
             }
         }
         catch { }

@@ -136,20 +136,29 @@
                 </StackPanel>
             </local:MyCard>
 
-            <!-- 常用命令卡片 -->
+            <!-- 常用命令卡片（按分类） -->
             <local:MyCard Title="常用命令" Margin="0,0,0,15">
                 <StackPanel Margin="20,40,20,20">
                     <ItemsControl x:Name="ListCommands">
                         <ItemsControl.ItemTemplate>
                             <DataTemplate>
-                                <Grid Margin="0,3">
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="140"/>
-                                        <ColumnDefinition/>
-                                    </Grid.ColumnDefinitions>
-                                    <TextBlock Grid.Column="0" Text="{Binding cmd}" FontFamily="Consolas" FontWeight="SemiBold"/>
-                                    <TextBlock Grid.Column="1" Text="{Binding desc}" Foreground="{DynamicResource Extension.SecondaryTextBrush}"/>
-                                </Grid>
+                                <StackPanel Margin="0,6">
+                                    <TextBlock Text="{Binding Name}" FontWeight="Bold" Foreground="{DynamicResource AccentBrush}"/>
+                                    <ItemsControl Margin="0,4,0,0" ItemsSource="{Binding Commands}">
+                                        <ItemsControl.ItemTemplate>
+                                            <DataTemplate>
+                                                <Grid Margin="0,3">
+                                                    <Grid.ColumnDefinitions>
+                                                        <ColumnDefinition Width="150"/>
+                                                        <ColumnDefinition/>
+                                                    </Grid.ColumnDefinitions>
+                                                    <TextBlock Grid.Column="0" Text="{Binding Cmd}" FontFamily="Consolas" FontWeight="SemiBold"/>
+                                                    <TextBlock Grid.Column="1" Text="{Binding Desc}" Foreground="{DynamicResource Extension.SecondaryTextBrush}"/>
+                                                </Grid>
+                                            </DataTemplate>
+                                        </ItemsControl.ItemTemplate>
+                                    </ItemsControl>
+                                </StackPanel>
                             </DataTemplate>
                         </ItemsControl.ItemTemplate>
                     </ItemsControl>
@@ -160,10 +169,18 @@
             <local:MyCard Title="新玩家必读" Margin="0,0,0,15">
                 <StackPanel Margin="20,40,20,20">
                     <TextBlock x:Name="TextWelcomeMsg" TextWrapping="Wrap" LineHeight="22"/>
-                    <ItemsControl x:Name="ListQuickStart" Margin="0,10,0,0">
+                    <TextBlock Text="快速上手" FontWeight="SemiBold" Margin="0,12,0,0"/>
+                    <ItemsControl x:Name="ListQuickStart" Margin="0,4,0,0">
                         <ItemsControl.ItemTemplate>
                             <DataTemplate>
                                 <TextBlock Text="{Binding}" Margin="0,3" Foreground="{DynamicResource Extension.SecondaryTextBrush}"/>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                    <ItemsControl x:Name="ListWelcomeTips" Margin="0,10,0,0">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding}" Margin="0,3" Foreground="{DynamicResource Extension.WarningBrush}"/>
                             </DataTemplate>
                         </ItemsControl.ItemTemplate>
                     </ItemsControl>
