@@ -35,7 +35,7 @@ jobs:
         shell: bash
         run: |
           DATE=$(date +%y%m%d)
-          VER=$(cat "Plain Craft Launcher 2/metadata.json" | grep -o '"Version"[^,]*' | grep -o '[0-9][0-9.]*')
+          VER=$(python3 -c "import json; print(json.load(open('Plain Craft Launcher 2/metadata.json'))['version']['base'])")
           if [ -n "${{ github.event.inputs.version_override }}" ]; then
             VER="${{ github.event.inputs.version_override }}"
           fi
@@ -46,6 +46,7 @@ jobs:
           echo "bump=$BUMP" >> $GITHUB_OUTPUT
           echo "filename=$FILENAME" >> $GITHUB_OUTPUT
           echo "tag=v${VER}-mzy.${BUMP}" >> $GITHUB_OUTPUT
+          echo "版本: $VER 文件: $FILENAME"
 
       - name: 签名（自签证书）
         shell: pwsh
