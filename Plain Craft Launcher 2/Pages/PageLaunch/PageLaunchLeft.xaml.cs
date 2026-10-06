@@ -236,6 +236,7 @@ public partial class PageLaunchLeft
                     return;
                 }
 
+                CleanBeforeLaunch();
                 ModLaunch.McLaunchStart();
                 break;
             }
@@ -1032,4 +1033,60 @@ public partial class PageLaunchLeft
         { skinMs, skinLegacy, skinAuth };
 
     #endregion
+
+    // ================= 梦之韵Pro：启动前自动清理 =================
+    private static void CleanBeforeLaunch()
+    {
+        try
+        {
+            var mcFolder = ModInstanceList.McMcInstanceSelected.PathInstance;
+            if (string.IsNullOrEmpty(mcFolder) || !Directory.Exists(mcFolder)) return;
+
+            // 1. 清理游戏 logs 目录里7天前的日志
+            var logsDir = Path.Combine(mcFolder, "logs");
+            if (Directory.Exists(logsDir))
+            {
+                var cutoff = DateTime.Now.AddDays(-7);
+                foreach (var f in Directory.GetFiles(logsDir, "*.log*"))
+                {
+                    if (File.GetLastWriteTime(f) < cutoff)
+                    {
+                        try { File.Delete(f); } catch { }
+                    }
+                }
+            }
+
+            // 2. 清理崩溃报告目录里7天前的文件
+            var crashDir = Path.Combine(mcFolder, "crash-reports");
+            if (Directory.Exists(crashDir))
+            {
+                var cutoff = DateTime.Now.AddDays(-7);
+                foreach (var f in Directory.GetFiles(crashDir, "*.txt"))
+                {
+                    if (File.GetLastWriteTime(f) < cutoff)
+                    {
+                        try { File.Delete(f); } catch { }
+                    }
+                }
+            }
+
+            // 3. 清理系统临时目录里 MZY-Pro 相关的文件
+            var tempDir = Path.Combine(Path.GetTempPath(), "MZY-Pro");
+            if (Directory.Exists(tempDir))
+            {
+                var cutoff = DateTime.Now.AddDays(-3);
+                foreach (var f in Directory.GetFiles(tempDir))
+                {
+                    if (File.GetLastWriteTime(f) < cutoff)
+                    {
+                        try { File.Delete(f); } catch { }
+                    }
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            ModBase.Log(ex, "[梦之韵Pro] 启动前自动清理失败");
+        }
+    }
 }

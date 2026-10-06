@@ -36,6 +36,7 @@ public partial class PageHomepageNewsView : MyPageRight
         BtnOpenModCheck.Click += (_, _) => OpenTool("modcheck");
         BtnOpenMemAdvice.Click += (_, _) => OpenTool("memadvice");
         BtnCheckin.Click += async (_, _) => await DoCheckin();
+        BtnSkinPreview.Click += (_, _) => new SkinPreviewWindow().ShowDialog();
     }
 
     // ================= 每日签到 =================
