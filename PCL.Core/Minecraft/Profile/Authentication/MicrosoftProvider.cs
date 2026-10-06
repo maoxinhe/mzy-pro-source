@@ -20,8 +20,8 @@ namespace PCL.Core.Minecraft.Profile.Authentication;
 /// </summary>
 public sealed class MicrosoftProvider : IAuthenticateProvider
 {
-    private const string DeviceEndpoint = "https://login.microsoftonline.com/consumers/oauth2/v2.0/devicecode";
-    private const string TokenEndpoint = "https://login.microsoftonline.com/consumers/oauth2/v2.0/token";
+    private const string DeviceEndpoint = "https://login.microsoftonline.com/common/oauth2/v2.0/devicecode";
+    private const string TokenEndpoint = "https://login.microsoftonline.com/common/oauth2/v2.0/token";
 
     private readonly string _clientId;
 
