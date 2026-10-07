@@ -85,8 +85,17 @@ jobs:
           mv HMCL/build/libs/HMCL-*.exe "$EXE_NAME"
           mv HMCL/build/libs/HMCL-*.jar "$JAR_NAME"
           echo "$SHA256_EXE  $EXE_NAME" > "$EXE_NAME.sha256"
-          # jar 用 SHA-1（HMCL 自更新校验）
+
+      # ── 2c. 关键修复：向 jar 注入版本属性并重新生成 HMCL 自签名 ──
+      # 发布版 JAR 若无 assets/hmcl.properties 的 hmcl.version，启动器会回落 @develop@
+      # → isDevelopmentVersion 恒真 → 自动更新检测永不触发。此步骤保证每次发布都带版本。
+      - name: Inject HMCL version & re-sign (fix auto-update detection)
+        shell: bash
+        run: |
+          python3 tools/inject_version.py "$JAR_NAME" mzy_sign_private.der "$VERSION" "$GITHUB_SHA"
+          # 注入后 jar 内容已变，SHA-1 必须在此之后计算（云端 jarsha1 校验依据）
           echo "SHA1_JAR=$(sha1sum "$JAR_NAME" | cut -d' ' -f1)" >> $GITHUB_ENV
+          echo "Injected version: $VERSION"
 
       # ── 2b. 编译 HTTP/3 (QUIC) 高速下载器 mzy_downloader.exe ──
       - name: Build HTTP/3 downloader
