@@ -1,0 +1,286 @@
+name: MZY Auto Build & Release (HMCL)
+
+on:
+  repository_dispatch:
+    types: [build-release]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build-sign-release:
+    runs-on: windows-latest
+    steps:
+      # ── 1. 从私有源码仓拉码（mzy-pro-source-code），本仓只做构建+发布 ──
+      - name: Checkout (private source)
+        uses: actions/checkout@v4
+        with:
+          repository: maoxinhe/mzy-pro-source-code
+          ref: hmcl-dev
+          token: ${{ secrets.MZY_PULL_TOKEN }}
+          fetch-depth: 0
+
+      - name: Set up JDK 17 (zulu jdk+fx)
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'zulu'
+          java-version: '17'
+          java-package: 'jdk+fx'
+
+      - uses: actions/setup-go@v5
+        with:
+          go-version: '1.23'
+          cache-dependency-path: tools/mzy_downloader/go.sum
+
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v4
+
+      # ── 2. GitHub 自动编译 exe ──
+      - name: Build executables
+        shell: bash
+        run: |
+          echo "$MZY_SIGN_KEY" | base64 -d > mzy_sign_private.der
+          export HMCL_SIGNATURE_KEY="$PWD/mzy_sign_private.der"
+          ./gradlew :HMCL:makeExecutables --no-daemon --parallel -x test
+        env:
+          JAVA_TOOL_OPTIONS: -Djava.awt.headless=true
+          VERSION_TYPE: stable
+          MZY_SIGN_KEY: ${{ secrets.MZY_SIGN_KEY }}
+
+      # ── 2b. 校对：生成 SHA-256 校验文件并验证产物完整性 ──
+      - name: Verify & checksum
+        shell: bash
+        run: |
+          EXE_SRC=$(ls HMCL/build/libs/HMCL-*.exe | head -1)
+          echo "Built: $EXE_SRC"
+          SIZE=$(stat -c%s "$EXE_SRC")
+          if [ "$SIZE" -lt 1000000 ]; then echo "ERROR: exe too small ($SIZE bytes)"; exit 1; fi
+          echo "Size OK: $SIZE bytes"
+          SHA=$(sha256sum "$EXE_SRC" | cut -d' ' -f1)
+          echo "SHA256: $SHA"
+          echo "SHA256_EXE=$SHA" >> $GITHUB_ENV
+
+      - name: List artifacts
+        run: |
+          Get-ChildItem HMCL/build/libs/ | Select-Object Name, Length
+
+      # ── 3/4. 按规范改名 CMY-Pro_打包日期_适用结构_版本.exe ──
+      - name: Prepare build metadata
+        id: meta
+        shell: bash
+        run: |
+          DATE=$(date +%y%m%d)
+          RUN_NUM=${{ github.run_number }}
+          echo "EXE_NAME=CMY-Pro_${DATE}_x64_${RUN_NUM}.exe" >> $GITHUB_ENV
+          echo "JAR_NAME=CMY-Pro_${DATE}_x64_${RUN_NUM}.jar" >> $GITHUB_ENV
+          echo "FULL_ZIP=CMY-Pro_${DATE}_x64_${RUN_NUM}_full.zip" >> $GITHUB_ENV
+          echo "TAG=v3.17-mzy.${RUN_NUM}" >> $GITHUB_ENV
+          echo "VERSION=3.17-mzy.${RUN_NUM}" >> $GITHUB_ENV
+          echo "DATE_FULL=$(date +%Y-%m-%d)" >> $GITHUB_ENV
+
+      - name: Rename exe
+        shell: bash
+        run: |
+          mv HMCL/build/libs/HMCL-*.exe "$EXE_NAME"
+          mv HMCL/build/libs/HMCL-*.jar "$JAR_NAME"
+          echo "$SHA256_EXE  $EXE_NAME" > "$EXE_NAME.sha256"
+          # jar 用 SHA-1（HMCL 自更新校验）
+          echo "SHA1_JAR=$(sha1sum "$JAR_NAME" | cut -d' ' -f1)" >> $GITHUB_ENV
+
+      # ── 2b. 编译 HTTP/3 (QUIC) 高速下载器 mzy_downloader.exe ──
+      - name: Build HTTP/3 downloader
+        shell: bash
+        run: |
+          cd tools/mzy_downloader
+          CGO_ENABLED=0 GOOS=windows GOARCH=amd64 go build -trimpath -ldflags "-s -w -H windowsgui" -o mzy_downloader.exe .
+          ls -la mzy_downloader.exe
+
+      - name: Write changelog (UTF-8)
+        shell: bash
+        run: |
+          cat > changelog.txt << 'EOF'
+          HMCL 开发版基底重建：
+          - 基于 HMCL dev 3.17 开发版源码
+          - GitHub Actions 全自动构建+签名+发布
+          - 版本号与代理加速链接自动同步云端
+          - 新增梦之韵整合包一键下载（HTTP/3 QUIC 高速通道）
+          EOF
+
+      # ── 3. 编译正确后签名 ──
+      - name: Decode certificate
+        shell: bash
+        run: |
+          echo "$MZY_PFX_BASE64" | base64 --decode > code_sign.pfx
+        env:
+          MZY_PFX_BASE64: ${{ secrets.MZY_PFX_BASE64 }}
+
+      - name: Sign exe
+        shell: pwsh
+        run: |
+          $cert = Get-PfxCertificate -FilePath code_sign.pfx -Password (ConvertTo-SecureString -String $env:MZY_PFX_PASSWORD -AsPlainText -Force)
+          Set-AuthenticodeSignature -FilePath $env:EXE_NAME -Certificate $cert -HashAlgorithm SHA256 -Force
+          $sig = Get-AuthenticodeSignature -FilePath $env:EXE_NAME
+          Write-Host "Signature status: $($sig.Status)"
+          if ($sig.Status -ne 'Valid') { Write-Host "WARNING: signature not valid (self-signed expected)" }
+        env:
+          MZY_PFX_PASSWORD: ${{ secrets.MZY_PFX_PASSWORD }}
+
+      # ── 3b. 签名 jar（与 exe 同一证书） ──
+      - name: Sign jar
+        shell: pwsh
+        run: |
+          $cert = Get-PfxCertificate -FilePath code_sign.pfx -Password (ConvertTo-SecureString -String $env:MZY_PFX_PASSWORD -AsPlainText -Force)
+          Set-AuthenticodeSignature -FilePath $env:JAR_NAME -Certificate $cert -HashAlgorithm SHA256 -Force | Out-Null
+          Write-Host "jar signed"
+        env:
+          MZY_PFX_PASSWORD: ${{ secrets.MZY_PFX_PASSWORD }}
+
+      # ── 3c. Java 运行时打包：jlink 精简 JRE + jpackage 生成自带 Java 的完整版 ──
+      - name: Build portable full version (bundled Java)
+        shell: pwsh
+        run: |
+          # jlink 精简运行时（含 JavaFX）
+          jlink --add-modules java.base,java.logging,java.xml,java.desktop,java.management,java.naming,java.net.http,jdk.unsupported,jdk.crypto.ec,jdk.crypto.cryptoki,jdk.localedata,javafx.base,javafx.controls,javafx.graphics,javafx.fxml --strip-debug --no-header-files --no-man-pages --compress=2 --output runtime
+          if (-not (Test-Path runtime\bin)) { throw "jlink runtime not created" }
+          # jpackage 输入目录只放 jar
+          New-Item -ItemType Directory -Force -Path appinput | Out-Null
+          Copy-Item -Path $env:JAR_NAME -Destination appinput\
+          # jpackage（注意：--name 不能用连字符，PowerShell 传参会导致 jpackage 误解析出 .gradle 无效选项）
+          jpackage --type app-image --input appinput --dest dist --name MZYPro --main-jar $env:JAR_NAME --main-class org.jackhuang.hmcl.Main --runtime-image runtime --app-version 1.0.0 --vendor "CMY-Pro" --icon HMCL\image\cmy_icon.ico
+          if (-not (Test-Path dist\MZYPro\MZYPro.exe)) { throw "jpackage app-image not created" }
+          # 产物目录/启动器品牌化改名（文件系统层面连字符无碍）
+          Rename-Item -Path dist\MZYPro\MZYPro.exe -NewName "CMY-Pro.exe"
+          # 关键：jpackage 引导程序按 exe 同名查找 app/<exe名>.cfg，cfg 必须同步改名否则报 Invalid/corrupt/No such file
+          Rename-Item -Path dist\MZYPro\app\MZYPro.cfg -NewName "CMY-Pro.cfg"
+          Rename-Item -Path dist\MZYPro -NewName "CMY-Pro"
+          # 压缩成 zip 发布（玩家解压即用，无需装 Java）
+          Compress-Archive -Path dist\CMY-Pro\* -DestinationPath $env:FULL_ZIP -CompressionLevel Optimal -Force
+          $size = (Get-Item $env:FULL_ZIP).Length
+          Write-Host "zip created: $env:FULL_ZIP $size bytes"
+          $hash = (Get-FileHash $env:FULL_ZIP -Algorithm SHA256).Hash.ToLower()
+          echo "SHA256_FULL=$hash" >> $env:GITHUB_ENV
+
+      # ── 5. 发布产品到 GitHub Release ──
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ env.TAG }}
+          name: CMY-Pro ${{ env.VERSION }}
+          body: |
+            梦之韵Pro 启动器自动构建版
+            构建日期: ${{ env.DATE_FULL }}
+            版本: ${{ env.VERSION }}
+            文件: ${{ env.EXE_NAME }}
+            SHA-256: `${{ env.SHA256_EXE }}`
+            完整版(自带Java): ${{ env.FULL_ZIP }} (SHA-256: `${{ env.SHA256_FULL }}`)
+            jar(SHA-1): ${{ env.SHA1_JAR }}
+            （自签证书签名，SmartScreen 可能仍提示未知发布者）
+          files: |
+            ${{ env.EXE_NAME }}
+            ${{ env.EXE_NAME }}.sha256
+            ${{ env.JAR_NAME }}
+            ${{ env.FULL_ZIP }}
+            tools/mzy_downloader/mzy_downloader.exe
+          draft: false
+          prerelease: false
+
+      # ── 6. 同步版本号给云端（写 Cloudflare KV latest_version） ──
+      - name: Sync version to cloud KV
+        shell: bash
+        run: |
+          python3 - << 'PYEOF'
+          import json, urllib.request, os
+          exe = os.environ["EXE_NAME"]
+          tag = os.environ["TAG"]
+          version = os.environ["VERSION"]
+          date = os.environ["DATE_FULL"]
+          changelog = open("changelog.txt", encoding="utf-8").read()
+          repo = os.environ["REPO"]
+          payload = {
+              "version": version,
+              "file": exe,
+              "url": f"https://github.com/{repo}/releases/download/{tag}/{exe}",
+              "changelog": changelog,
+              "date": date,
+              "tag": tag,
+              "jar": f"https://github.com/{repo}/releases/download/{tag}/{os.environ['JAR_NAME']}",
+              "jarsha1": os.environ["SHA1_JAR"],
+              "full": f"https://github.com/{repo}/releases/download/{tag}/{os.environ['FULL_ZIP']}"
+          }
+          req = urllib.request.Request(
+              f"https://api.cloudflare.com/client/v4/accounts/{os.environ['CF_ACCOUNT_ID']}/storage/kv/namespaces/{os.environ['CF_KV_NAMESPACE_ID']}/values/latest_version",
+              data=json.dumps(payload).encode(),
+              headers={
+                  "Authorization": f"Bearer {os.environ['CF_API_TOKEN']}",
+                  "Content-Type": "application/json"
+              },
+              method="PUT"
+          )
+          resp = urllib.request.urlopen(req)
+          print("KV latest_version write:", resp.status)
+          PYEOF
+        env:
+          REPO: ${{ github.repository }}
+          CF_API_TOKEN: ${{ secrets.CF_API_TOKEN }}
+          CF_ACCOUNT_ID: ${{ secrets.CF_ACCOUNT_ID }}
+          CF_KV_NAMESPACE_ID: ${{ secrets.CF_KV_NAMESPACE_ID }}
+
+      # ── 7. 同步 Cloudflare Worker 代理加速链接（写入 KV 供 worker 加速分发） ──
+      - name: Sync Cloudflare Worker proxy link
+        shell: bash
+        run: |
+          python3 - << 'PYEOF'
+          import json, urllib.request, os
+          # 代理加速链接：玩家通过 Cloudflare Worker 入口下载（worker 302 到 GitHub 直链）
+          proxy = {
+              "entry": "https://apc.camzy.uno/update/download",
+              "file": os.environ["EXE_NAME"],
+              "tag": os.environ["TAG"],
+              "updated": os.environ["DATE_FULL"]
+          }
+          req = urllib.request.Request(
+              f"https://api.cloudflare.com/client/v4/accounts/{os.environ['CF_ACCOUNT_ID']}/storage/kv/namespaces/{os.environ['CF_KV_NAMESPACE_ID']}/values/download_proxy",
+              data=json.dumps(proxy).encode(),
+              headers={
+                  "Authorization": f"Bearer {os.environ['CF_API_TOKEN']}",
+                  "Content-Type": "application/json"
+              },
+              method="PUT"
+          )
+          resp = urllib.request.urlopen(req)
+          print("KV download_proxy write:", resp.status)
+          PYEOF
+          # 验证加速链接可用（带浏览器 UA，避免 GitHub 资产 403）
+          code=$(curl -s -o /dev/null -w "%{http_code}" -A "Mozilla/5.0 (Windows NT 10.0; Win64; x64)" "https://apc.camzy.uno/update/download")
+          echo "Proxy /update/download final status: $code"
+          if [ "$code" != "200" ] && [ "$code" != "302" ]; then echo "ERROR: proxy link not reachable ($code)"; exit 1; fi
+          # 验证云端版本号已更新：直接读 KV（权威来源，runner 访问 CF API 稳定）
+          python3 - << 'PYEOF'
+          import urllib.request, json, os
+          url = f"https://api.cloudflare.com/client/v4/accounts/{os.environ['CF_ACCOUNT_ID']}/storage/kv/namespaces/{os.environ['CF_KV_NAMESPACE_ID']}/values/latest_version"
+          req = urllib.request.Request(url, headers={"Authorization": f"Bearer {os.environ['CF_API_TOKEN']}"})
+          try:
+              data = json.load(urllib.request.urlopen(req, timeout=30))
+          except Exception as e:
+              print("ERROR: read KV latest_version failed:", e)
+              exit(1)
+          ver = data.get("version", "")
+          expect = os.environ["VERSION"]
+          print(f"Cloud KV latest version: {ver} (expect {expect})")
+          if ver != expect:
+              print("ERROR: cloud version mismatch")
+              exit(1)
+          # 一并验证代理链接 KV 已写入
+          url2 = f"https://api.cloudflare.com/client/v4/accounts/{os.environ['CF_ACCOUNT_ID']}/storage/kv/namespaces/{os.environ['CF_KV_NAMESPACE_ID']}/values/download_proxy"
+          req2 = urllib.request.Request(url2, headers={"Authorization": f"Bearer {os.environ['CF_API_TOKEN']}"})
+          proxy = json.load(urllib.request.urlopen(req2, timeout=30))
+          print("KV download_proxy:", proxy.get("entry"), "| file:", proxy.get("file"))
+          if proxy.get("file") != os.environ["EXE_NAME"]:
+              print("ERROR: proxy file mismatch")
+              exit(1)
+          PYEOF
+        env:
+          CF_API_TOKEN: ${{ secrets.CF_API_TOKEN }}
+          CF_ACCOUNT_ID: ${{ secrets.CF_ACCOUNT_ID }}
+          CF_KV_NAMESPACE_ID: ${{ secrets.CF_KV_NAMESPACE_ID }}
