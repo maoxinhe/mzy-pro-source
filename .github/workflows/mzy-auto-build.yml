@@ -17,7 +17,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           repository: maoxinhe/mzy-pro-source-code
-          ref: hmcl-dev
+          ref: CMY-dev
           token: ${{ secrets.MZY_PULL_TOKEN }}
           fetch-depth: 0
 
